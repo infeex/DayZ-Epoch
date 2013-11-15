@@ -1,8 +1,7 @@
-// This tool is part of DayZ4linux project. 
-// This software is licensed under GPLv3 license 
-// till the servers run by the Author 
-// has their IP address whitelisted to the public hive
-// Author contact: facoptere-at-gmail.com
+/*
+        Created exclusively for ArmA2:OA - Epoch DayZ Mod.
+        Please request permission to use/alter/distribute from the author (facoptere@gmail.com)
+*/
 
 // change this value to anything else
 #define RANDOM 7890

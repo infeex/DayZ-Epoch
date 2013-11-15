@@ -1,3 +1,8 @@
+/*
+        Created exclusively for ArmA2:OA - Epoch DayZ Mod.
+        Please request permission to use/alter/distribute from the author (facoptere@gmail.com)
+*/
+
 private["_id","_array","_vehicle","_part","_hitpoint","_type","_hasToolbox","_section","_nameType","_namePart","_damage","_selection","_dis","_sfx","_hitpoints","_allFixed"];
 
 _id = _this select 2;

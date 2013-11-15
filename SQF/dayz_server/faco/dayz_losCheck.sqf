@@ -1,3 +1,7 @@
+/*
+        Created exclusively for ArmA2:OA - Epoch DayZ Mod.
+        Please request permission to use/alter/distribute from the author (facoptere@gmail.com)
+*/
 
 				private [ "_cantSee", "_target", "_agent", "_cantSee", "_tPos", "_zPos", "_ed", "_deg", "_fov" ];
 				_target = _this select 0; // PUT THE PLAYER IN FIRST ARGUMENT!!!!

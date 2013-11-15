@@ -1,3 +1,8 @@
+/*
+        Created exclusively for ArmA2:OA - Epoch DayZ Mod.
+        Please request permission to use/alter/distribute from the author (facoptere@gmail.com)
+*/
+
 "PVCDZ_flies" addPublicVariableEventHandler { 
 	//diag_log format [ "%1 -------------------------------- %2", __FILE__, _this ];
 	_that = (_this select 1);

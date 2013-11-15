@@ -1,85 +1,8 @@
 /*
-#define FORCE(offset, command) _x = abs((_actual select offset)-(faw_directive select offset));\
-switch true do { \
-	case (_x > 0.1): { _tick command (faw_directive select offset); \
-			PVDZ_sec_atp = format [ "%10 FORCING %11   forecast c%1 r%2 f%3   directive c%4 r%5 f%6  actual c%7 r%8 f%9",\
-				faw_target select 1, faw_target select 2, faw_target select 3,\
-				faw_directive select 1, faw_directive select 2, faw_directive select 3,\
-				_actual select 1, _actual select 2, _actual select 3, getPlayerUID player, offset\
-			];\
-			publicVariableServer "PVDZ_sec_atp";\
-	}; \
-	case (_x > 0.02): { _tick command (faw_directive select offset); }; \
-};
-if (!isNil "faw_param_routine") then { 
-	terminate faw_param_routine; 
-};
-faw_param_routine = [] spawn {
-	private [ "_x", "_tick", "_actual", "_y" ];
-
-	waitUntil {!isNil "faw_target"};
-//	diag_log "Starting faw_param_routine...";
-	_tick = 60;
-
-	faw_directive = [];
-	_actual = [];
-	while {true} do {
-		// put in faw_directive the future weather for next _tick seconds
-		if ((faw_target select 0) - diag_tickTime < _tick) then { // we should have reached the forecast
-			faw_directive = +(faw_target);
-		}
-		else { // linear regression from init to target
-			_ratio = (_tick + diag_tickTime - (faw_init select 0)) / ((faw_target select 0) - (faw_init select 0));
-			for "_x" from 1 to 6 do {
-				_y = (faw_target select _x) - (faw_init select _x);
-				_y = _y * _ratio;
-				_y = _y + (faw_init select _x);
-				if (_x < 6) then { _y = 0 max (1 min _y); };
-	//diag_log format [ "compute %8 time: faw_target:%1 faw_init:%2 ela:%3 ratio:%4   value: faw_target:%5 faw_init:%6 value:%7",
-	//faw_target select 0,faw_init select 0,_tick + diag_tickTime - (faw_init select 0),_ratio,
-	//faw_target select _x, faw_init select _x, _y,_x];
-				faw_directive set [ _x, _y ];
-			};
-		};
-		// change snow according to altitude (snow -> rain)
-		if (faw_directive select 5 > 0) then {
-			_player_temperature = faw_temperature + (350 - ((getPosASL player) select 2)) / 100;
-			// todo: set dayz_temperature
-			_remove =  1 min ((0 max (_player_temperature - 4)) / 2.5);
-			if (_remove > 1) then {
-				faw_directive set [ 2, 0.1 + (faw_directive select 5) * _remove / 10 ];
-				faw_directive set [ 5, (faw_directive select 5) * (1 - _remove) ];
-			};
-		};
-		
-		// get true weather from ArmA engine
-		_actual set [1, overcast];
-		_actual set [2, rain];
-		_actual set [3, fog];
-
-		// force or set weather
-		FORCE(1, setOvercast)	
-		FORCE(2, setRain)	
-		FORCE(3, setFog)	
-		setWind [(faw_directive select 4) * sin(faw_directive select 6) * 10, 
-			(faw_directive select 4) * cos(faw_directive select 6) * 10 , true];	
-		// snow is done by snow routine
-
-		if ( (floor diag_tickTime) % 30 < _tick) then { 
-			PVDZ_sec_atp = format [ "%7 forecast %1 %2   directive %3 %4   actual %5 %6",
-				faw_target select 2, faw_target select 3,
-				faw_directive select 2, faw_directive select 3,
-				_actual select 2, _actual select 3, getPlayerUID player
-			];
-			publicVariableServer "PVDZ_sec_atp";
-		};
-		//diag_log format [ "%1 FAW faw_target: %2  directive: %3  actual: %4", __FILE__, faw_target, faw_directive, _actual];
-
-		// wait 
-		sleep _tick;
-	};
-};
+        Created exclusively for ArmA2:OA - Epoch DayZ Mod.
+        Please request permission to use/alter/distribute from the author (facoptere@gmail.com)
 */
+
 faw_param_routine= [] spawn { sleep 3600; };
 
 if (!isNil "faw_snow_routine") then { 

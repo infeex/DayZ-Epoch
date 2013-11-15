@@ -1,3 +1,8 @@
+/*
+        Created exclusively for ArmA2:OA - Epoch DayZ Mod.
+        Please request permission to use/alter/distribute from the author (facoptere@gmail.com)
+*/
+
 #include "\z\addons\dayz_server\faco\gcam_uid.hpp"
 __slog="";__slog2="";__slog3=0;
 	_norm_cargo = {

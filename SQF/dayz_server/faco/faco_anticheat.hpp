@@ -1,3 +1,8 @@
+/*
+        Created exclusively for ArmA2:OA - Epoch DayZ Mod.
+        Please request permission to use/alter/distribute from the author (facoptere@gmail.com)
+*/
+
 // Public variable names for client and server (CLIENT one need to be blacklisted in BE filter publicvariable)
 #define PVCLIENT CLTFACO7840
 #define PVSERVER SRVFACO7840

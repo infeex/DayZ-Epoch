@@ -1,3 +1,8 @@
+/*
+        Created exclusively for ArmA2:OA - Epoch DayZ Mod.
+        Please request permission to use/alter/distribute from the author (facoptere@gmail.com)
+*/
+
 
 private ["_target","_targets","_localtargets","_remotetargets", "_remotetargets_changed", "_idx", "_values", "_penalty", "_idx" ];
 _agent = _this;

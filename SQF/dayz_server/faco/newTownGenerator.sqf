@@ -1,3 +1,8 @@
+/*
+        Created exclusively for ArmA2:OA - Epoch DayZ Mod.
+        Please request permission to use/alter/distribute from the author (facoptere@gmail.com)
+*/
+
 _nearbySize = 300; // look for cells around this radius
 _chunkSize = 10; // how many objects to create per frame
 switch true do {
