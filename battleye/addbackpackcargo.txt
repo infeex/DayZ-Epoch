@@ -1,0 +1,2 @@
+1 !=DZ_Backpack_EP1 !=DZ_British_ACU !=DZ_CivilBackpack_EP1 !=DZ_GunBag_EP1
+

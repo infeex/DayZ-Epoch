@@ -1,0 +1,6 @@
+1 !FR_OHara_DZ !Survivor2_DZ !z_villager3
+
+1 FR_OHara_DZ !Fort_RazorWirePreview !GarageWoodDoor_Preview_DZ !Generator_DZ !Hedgehog_DZ !Land_Fire_DZ !Land_fortified_nest_smallPreview !TentStorageDomed2 !WoodFloorHalf_Preview_DZ !WoodFloorQuarter_Preview_DZ !WoodSmallWall_Preview_DZ !WoodSmallWallThird_Preview_DZ !WoodStairs_Preview_DZ !WorkBench_DZ
+1 Survivor2_DZ !Shot !WoodenArrowF
+1 z_villager3 !Shot !WoodenArrowF
+

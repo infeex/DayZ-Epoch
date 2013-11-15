@@ -1,0 +1,6 @@
+1 !usec_ !hit_ !"banditkills" !"bodyname" !"characterid" !"claimed" !"combattimeout" !"created" !"deathtype" !"dze_display_name" !"freetarget" !"friendlies" !"humanity" !"humankills" !"lasttransfusion" !"looted" !"meatharvested" !"medforceupdate" !"messing" !"mydest" !"needupdate" !"norrn_unconscious" !"oempos" !"posforceupdate" !"startcombattimer" !"taglist" !"targets" !"temperature" !"totaldmg" !"unconscioustime" !"updateplayer" !"worldspace" !"zombied" !"zombiekills" !"zombiespawn"
+
+1 usec_ !"usec_bloodqty" !"usec_infected" !"usec_injured" !"usec_inpain" !"usec_iscardiac" !"usec_isdead" !"usec_lowblood"
+
+1 hit_ !"hit_?" !"hit_elektronika" !"hit_glass1" !"hit_glass2" !"hit_glass3" !"hit_glass4" !"hit_glass5" !"hit_glass6" !"hit_hands" !"hit_karoserie" !"hit_legs" !"hit_l svetlo" !"hit_motor" !"hit_palivo" !"hit_pravy predni tlumic" !"hit_pravy zadni tlumic" !"hit_p svetlo" !"hit_sklo predni l" !"hit_sklo predni p" !"hit_velka vrtule" !"hit_wheel_1_1_steering" !"hit_wheel_1_2_steering" !"hit_wheel_1_3_steering" !"hit_wheel_1_4_steering" !"hit_wheel_2_1_steering" !"hit_wheel_2_2_steering" !"hit_wheel_2_3_steering" !"hit_wheel_2_4_steering"
+
