@@ -60,6 +60,8 @@ if (_num0 > 0) then {
 			_num = _num -1;
 		};
 	};
+
+	dayz_buildingMonitor set [count dayz_buildingMonitor,_obj];
 };
 //diag_log format ["%1:   num:%3 maxnum:%4 type:%5", __FILE__, "", _num, _num0, _buildingType ];
 (_num0 - _num)

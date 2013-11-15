@@ -156,20 +156,20 @@ server_hiveReadWrite = {
 	_key = _this;
 	//diag_log ("ATTEMPT READ/WRITE: " + _key);
 	_data = "HiveExt" callExtension _key;
-	// diag_log ("READ/WRITE: " +str(_data));
-	_resultArray = call compile format ["%1",_data];
+	//diag_log ("READ/WRITE: " +str(_data));
+// FACO >>
+	_resultArray = call compile _data;
+	if ((isNil "_resultArray") OR {(typeName _resultArray != "ARRAY")}) then {
+		_resultArray = call compile (_data+"0]");
+	};
+	if ((isNil "_resultArray") OR {(typeName _resultArray != "ARRAY")}) then {
+		_resultArray = [ "OBJ", -1, "Old_bike_TK_CIV_EP1", "-1"];
+	};
+// FACO <<
 	_resultArray
 };
 
-server_hiveReadWriteLarge = {
-	private["_key","_resultArray","_data"];
-	_key = _this;
-	//diag_log ("ATTEMPT READ/WRITE: " + _key);
-	_data = "HiveExt" callExtension _key;
-	// diag_log ("READ/WRITE: " +str(_data));
-	_resultArray = call compile _data;
-	_resultArray
-};
+server_hiveReadWriteLarge = server_hiveReadWrite;
 
 server_characterSync = {
 	private ["_characterID","_playerPos","_playerGear","_playerBackp","_medical","_currentState","_currentModel","_key"];

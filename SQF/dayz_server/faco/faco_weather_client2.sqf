@@ -116,6 +116,7 @@ faw_temperature = 0;
 drn_var_DynamicWeather_ServerInitialized = nil;
 "drn_DynamicWeather_DebugTextEventArgs" addPublicVariableEventHandler {};
 "drn_DynamicWeatherEventArgs" addPublicVariableEventHandler {};
+"PVDZE_plr_SetWeather" addPublicVariableEventHandler {};
 drn_var_DynamicWeather_Rain = 0;
 faw_update_EH = {
 		// faw_target,faw_directive,faw_init arrays:

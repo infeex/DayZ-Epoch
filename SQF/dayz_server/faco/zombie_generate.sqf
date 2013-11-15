@@ -152,8 +152,8 @@ _agent = objNull;
 		//dayz_zedMonitor set [count dayz_zedMonitor, _agent];
 		
 		//Disable simulation 
-		PVDZ_Server_Simulation = [_agent, false];
-		publicVariableServer "PVDZ_Server_Simulation";
+		//PVDZ_Server_Simulation = [_agent, false];
+		//publicVariableServer "PVDZ_Server_Simulation";
 		
 		//Start behavior
 		_id = [_position,_agent] execFSM "\z\AddOns\dayz_code\system\zombie_agent.fsm";

@@ -95,3 +95,19 @@ else
 {
 	deleteVehicle _newObject;
 };
+// FACO >>
+diag_log format ["Player UID#%3 CID#%4 %1 as %5 died at %2", 
+	_victim call fa_plr2str, (getPosATL _victim) call fa_coor2str,
+	getPlayerUID _victim,_characterID,
+	typeOf _victim
+];
+
+// _x = _newObject getVariable [ "attacker", ""];
+// if (_x != "") then {
+// 	_y = format ["\n\nLast attacker: %1", _x];
+// 	[_newObject,_newObject,"loc",rTITLETEXT, _y,"PLAIN DOWN",5] call RE;
+// 	diag_log format [ "On %1 screen: %2", name _newObject, _x];
+// };
+
+_newObject setVariable["noatlf4",0];
+// << FACO 

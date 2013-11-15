@@ -33,7 +33,16 @@ if ((_timeout - time) > 0) then {
 //dayz_disco = dayz_disco - [_playerID];
 if (!isNull _object) then {
 
-	diag_log format["DISCONNECT: %1 (%2) Object: %3, _characterID: %4", _playerName,_playerID,_object,_characterID];
+//	diag_log format["DISCONNECT: %1 (%2) Object: %3, _characterID: %4", _playerName,_playerID,_object,_characterID];
+// FACO >>
+	_lastDamage = _object getVariable["noatlf4",0];
+	_lastDamage = round(diag_ticktime - _lastDamage);
+	diag_log format["Player UID#%1 CID#%2 %3 as %4, logged off at %5%6", 
+		getPlayerUID _object, _characterID, _object call fa_plr2str, typeOf _object, 
+		(getPosATL _object) call fa_coor2str,
+		if ((_lastDamage < 33) AND {((alive _object) AND {(_object distance (getMarkerpos "respawn_west") >= 2000)})}) then {" while in combat ("+str(_lastDamage)+" seconds left)"} else {""}
+	]; 
+// << FACO
 
 	_id = [_playerID,_characterID,2] spawn dayz_recordLogin;
 

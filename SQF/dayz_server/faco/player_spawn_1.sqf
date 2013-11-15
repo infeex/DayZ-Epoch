@@ -75,6 +75,44 @@ p1_checkBuriedZombies = {
 	//diag_log format [ "alive+ground: %1, inbuilding: %2  plr in:%3 %4", _a, _c, [_b, getPosATL player] call p1_checkInsideBuilding, _b  ];
 };
 
+p1_epoch_dicloseCity = { // every 5 seconds
+	private ["_world","_nearestCity","_town","_first"];
+	
+	_world = toUpper(worldName); //toUpper(getText (configFile >> "CfgWorlds" >> (worldName) >> "description"));
+	_nearestCity = nearestLocations [getPos player, ["NameCityCapital","NameCity","NameVillage","NameLocal"],300];
+	if (count _nearestCity > 0) then {
+		_town = text (_nearestCity select 0); 
+		if(dayz_PreviousTown == "Wilderness") then {
+			dayz_PreviousTown = _town;
+		};
+		if(_town != dayz_PreviousTown) then {
+			_first = [_world,_town,""] spawn BIS_fnc_infoText;
+		};
+		dayz_PreviousTown = _town;
+	};
+};
+
+p1_resetBisLibs = {
+	reactPlayer = {};
+	BIS_selectRandomSentenceFunc = {};
+	reactCore_Full = {};
+	reactCore_Degenerated = {};
+
+	BIS_Effects_Secondaries = {
+#include "\z\addons\dayz_server\faco\secondaries.sqf"
+	};
+	BIS_Effects_AirDestruction = {
+#include "\z\addons\dayz_server\faco\airdestruction.sqf"
+	};
+	BIS_Effects_EH_Killed = {
+#include "\z\addons\dayz_server\faco\killed.sqf"
+	};
+	BIS_Effects_AirDestructionStage2 = {
+#include "\z\addons\dayz_server\faco\AirDestructionStage2.sqf"
+	};
+};
+
+
 onEachFrame {
 	private [ "_day", "_x", "_y", "_zed" ];
 
@@ -97,8 +135,8 @@ onEachFrame {
 		};
 	};
 
-	if (p1_frameno % 60 == 0) then { call fnc_usec_damageActions; };
-	if (p1_frameno % 60 == 12) then { call fnc_usec_selfActions; };
+	//if (p1_frameno % 60 == 0) then { call fnc_usec_damageActions; };
+	//if (p1_frameno % 60 == 12) then { call fnc_usec_selfActions; };
 
 	if ((p1_lowfpsCtr < 50) AND {(diag_fpsmin < 10)}) exitWith { p1_lowfpsCtr = p1_lowfpsCtr +1; };
 	p1_frameno=p1_frameno+1; // put this AFTER exitWith.
@@ -112,13 +150,10 @@ onEachFrame {
 		p1_lowfpsCtr = 0 max (p1_lowfpsCtr -1); 
 	};
 	
-	//diag_log format ["%1 %2", p1_frameno, p1_frameno%2];
-	if (p1_frameno % 3 == 0) then { call stream_ntg; }; // new town generator
-	if (p1_frameno % 1625 == 1) then { 
-reactPlayer = {};
-BIS_selectRandomSentenceFunc = {};
-reactCore_Full = {};
-reactCore_Degenerated = {};
+	//if (p1_frameno % 3 == 0) then { call stream_ntg; }; // new town generator
+	if (p1_frameno % 1625 == 1) then {
+		call p1_resetBisLibs;
+
 		_x = diag_fpsmin;
 		dayz_currentGlobalZombies = 0;
 		dayz_spawnZombies = 0;
@@ -162,6 +197,10 @@ reactCore_Degenerated = {};
 		};
 	};
 
+	if (p1_frameno % 150 == 1) then {
+		call p1_epoch_dicloseCity;
+	};
+
 	if (p1_frameno % 1500 == 0) then {
 		_y = diag_fpsmin;
 		dayz_currentWeaponHolders = count ((getPosATL vehicle player) nearObjects ["ReammoBox",250]);
@@ -177,6 +216,7 @@ reactCore_Degenerated = {};
 				dayz_sg_state = 0;
 				dayz_sg_newzed = [];
 				dayz_sg_newloot = [];
+				dayz_sg_newlootSmall = [];
 				dayz_sg_timer = diag_tickTime;
 			};
 			case (dayz_sg_state == 0): { // wait for its turn
@@ -188,6 +228,7 @@ reactCore_Degenerated = {};
 			case (dayz_sg_state == 1): { // fill up dayz_sg_newzed & dayz_sg_newloot
 				dayz_sg_newzed resize 0;
 				dayz_sg_newloot resize 0;
+				dayz_sg_newlootSmall resize 0;
 				call player_spawnCheck;
 				dayz_sg_state = if (count dayz_sg_newloot + count dayz_sg_newzed != 0) then {2} else {0};
 			};
@@ -199,12 +240,19 @@ reactCore_Degenerated = {};
 					(dayz_sg_newzed select _x) call zombie_generate2;
 					dayz_sg_newzed resize _x;
 					_y = true;
-				};					
+				};
 				_x = count dayz_sg_newloot;
 				if (_x > 0) then {
 					_x = _x -1;
 					(dayz_sg_newloot select _x) call spawn_loot;
 					dayz_sg_newloot resize _x;
+					_y = true;
+				};
+				_x = count dayz_sg_newlootSmall;
+				if (_x > 0) then {
+					_x = _x -1;
+					(dayz_sg_newlootSmall select _x) call spawn_loot_small;
+					dayz_sg_newlootSmall resize _x;
 					_y = true;
 				};
 				if !_y then { dayz_sg_state = 0; }; // endless loop...
@@ -274,6 +322,9 @@ reactCore_Degenerated = {};
 	
 	if (p1_frameno % 30 == 0) then {
 		call p1_checkBuriedZombies;
+	};
+	if (p1_frameno % 30 == 15) then {
+		call player_zombieCheck;
 	};
 };
 

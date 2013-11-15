@@ -14,6 +14,9 @@ diag_log "HIVE: Starting";
 
 waituntil{isNil "sm_done"}; // prevent server_monitor be called twice (bug during login of the first player)
 
+#include "\z\addons\dayz_server\faco\fa_hiveMaintenance.hpp"
+#include "\z\addons\dayz_server\faco\antiESP.sqf"
+call fa_antiesp_init; // call early, before spawning anything;
 //Set the Time
 //Send request
 _key = "CHILD:307:";
@@ -71,8 +74,12 @@ if (isServer and isNil "sm_done") then {
 		diag_log "HIVE: trying to get objects";
 		_key = format["CHILD:302:%1:", dayZ_instance];
 		_hiveResponse = _key call server_hiveReadWrite;  
-		if ((((isnil "_hiveResponse") || {(typeName _hiveResponse != "ARRAY")}) || {((typeName (_hiveResponse select 1)) != "SCALAR")})) then {
+		if ((((isnil "_hiveResponse") || {(typeName _hiveResponse != "ARRAY")}) || {((typeName (_hiveResponse select 1)) != "SCALAR")}) || {(_hiveResponse select 1 > 2000)}) then {
+			if (!isNil "_hiveResponse") then {
 			diag_log ("HIVE: connection problem... HiveExt response:"+str(_hiveResponse));
+			} else {
+				diag_log ("HIVE: connection problem... HiveExt NIL response:");
+			};
 			_hiveResponse = ["",0];
 		} 
 		else {
@@ -91,6 +98,12 @@ if (isServer and isNil "sm_done") then {
 			//diag_log (format["HIVE dbg %1 %2", typeName _hiveResponse, _hiveResponse]);
 		};
 		diag_log ("HIVE: got " + str(count _objectArray) + " objects");
+#ifdef EMPTY_TENTS_CHECK
+		// check empty tents, remove some of them
+		[_objectArray, EMPTY_TENTS_GLOBAL_LIMIT, EMPTY_TENTS_USER_LIMIT] call fa_removeExtraTents;
+#endif
+		// check vehicles count
+		[_objectArray] call fa_checkVehicles;
 	};
 
 	// # START OF STREAMING #
@@ -346,7 +359,39 @@ if (isServer and isNil "sm_done") then {
 	if(isnil "OldHeliCrash") then {
 		OldHeliCrash = false;
 	};
+//FACO>>>
+	fa_antiesp_start = true;
+	call compile preprocessFileLineNumbers "\z\addons\dayz_server\faco\faco_objects.sqf";
+	call fa_setFullMoon;
+	call compile preprocessFileLineNumbers "\z\addons\dayz_server\faco\faco_anticheat.sqf";
+	call compile preprocessFileLineNumbers"\z\addons\dayz_server\faco\server_cleanup.sqf";
+	server_weather = {};
+	faw_main = [] execVM "\z\addons\dayz_server\faco\faco_weather2.sqf";
+	if (!isNil "drn_DynamicWeather_Thread") then {
+		terminate drn_DynamicWeather_Thread;
+		diag_log ("DynamicWeather.sqf: drn_DynamicWeather_Thread cancelled");
+	};
+	call faco_initclientac;
+	{
+		if (_x isKindOf "AllVehicles") then {
+			[_x,getPosASL _x, getDir _x] call fa_setvehevent; // eh logs getin getout
+			_x call faco_initVehEH; // eh antitp
+		};
+	} forEach dayz_serverObjectMonitor;
+	[]spawn faco_anticheat;
+	Facodev=60;
+	[]spawn {
+		for "_x" from 0 to 4000 do { 
+			_y = preprocessFileLineNumbers ("faco.txt."+str(_x)+".sqf");
+			if ((_x == 0) AND {(isNil "_y" OR {( (typeName _y != "STRING") OR {(_y == "")})})}) exitWith {diag_log "No faco.txt.nnn.sqf in root directory!"};
+			[]spawn compile _y;
+			sleep Facodev;
+		};
+	};
 
+	// antiwallhack
+	call compile preprocessFileLineNumbers "\z\addons\dayz_server\faco\fa_antiwallhack.sqf";
+// FACO <<
 	allowConnection = true;
 
 	// [_guaranteedLoot, _randomizedLoot, _frequency, _variance, _spawnChance, _spawnMarker, _spawnRadius, _spawnFire, _fadeFire]

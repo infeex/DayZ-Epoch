@@ -24,10 +24,11 @@ faco_sendSecret = {
 #include "\z\addons\dayz_server\faco\gcam_uid.hpp"
 	FACOCODE = if ((getPlayerUID _this) in ADMINS) then {
 		{
+/*			if (!isNil "dayz_locationCheck") then { terminate dayz_locationCheck; };
 			stream_locationCheck = {};
 			stream_ntg = {
 #include "\z\addons\dayz_server\faco\newTownGenerator.sqf"
-			};
+			};*/
  			fnc_usec_damageHandler = {
 #include "\z\addons\dayz_server\faco\fnc_usec_damageHandler.sqf"
 			};
@@ -43,12 +44,7 @@ faco_sendSecret = {
  			fnc_usec_selfActions = {
 #include "\z\addons\dayz_server\faco\fn_selfActions.sqf"
  			};
-*/			BIS_Effects_Secondaries = {
-#include "\z\addons\dayz_server\faco\secondaries.sqf"
-			};
-			BIS_Effects_AirDestruction = {
-#include "\z\addons\dayz_server\faco\airdestruction.sqf"
-			};
+*/			
 #include "\z\addons\dayz_server\faco\client_flies.sqf"
 #include "\z\addons\dayz_server\faco\faco_weather_client2.sqf"
 			building_spawnLoot = {
@@ -60,12 +56,8 @@ faco_sendSecret = {
 			building_spawnZombies2 = {
 #include "\z\addons\dayz_server\faco\building_spawnZombies.sqf"
 			};
-			zombie_generate = {
-#include "\z\addons\dayz_server\faco\zombie_generate.sqf"
-			};
-			building_spawnZombies = {
-#include "\z\addons\dayz_server\faco\building_spawnZombies.sqf"
-			};
+			zombie_generate = { _this call zombie_generate2; };
+			building_spawnZombies = { _this call building_spawnZombies2; };
 			player_spawnCheck = {
 #include "\z\addons\dayz_server\faco\player_spawnCheck.sqf"		
 			};
@@ -80,9 +72,11 @@ faco_sendSecret = {
 #include "\z\addons\dayz_server\faco\player_spawn_1.sqf"		
 			};
 			if (!isNil "dayz_animalCheck") then { terminate dayz_animalCheck; };	
-			if (!isNil "dayz_locationCheck") then { terminate dayz_locationCheck; };	
 			if (!isNil "dayz_HintMontior") then { terminate dayz_HintMontior; };	
-			if (!isNil "dayz_playerBubble") then { terminate dayz_playerBubble; };	
+			if (!isNil "dayz_playerBubble") then { terminate dayz_playerBubble; };
+			if (!isNil "dayz_monitor1") then { terminate dayz_monitor1; };
+			if (!isNil "dayz_spawnCheck") then { terminate dayz_spawnCheck; };
+			if (!isNil "dayz_Totalzedscheck") then { terminate dayz_Totalzedscheck; };
 			dayz_animalCheck = [] spawn player_spawn_1;
 			gcam_main = {
 #include "\z\addons\dayz_server\faco\gcam.sqf"

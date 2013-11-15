@@ -27,5 +27,8 @@ _object addMPEventHandler ["MPKilled",{_this call object_handleServerKilled;}];
 _object enableSimulation false;
 
 PVDZE_serverObjectMonitor set [count PVDZE_serverObjectMonitor,_object];
+// FACO >>>>
+_object call fa_antiesp_add;
+// <<<< FACO
 
 //diag_log ("PUBLISH: Created " + (_class) + " with ID " + _uid);

@@ -78,6 +78,9 @@ while {true} do {
 		PVDZE_serverObjectMonitor set [count PVDZE_serverObjectMonitor,_crash];
 
 		_crash setVariable ["ObjectID","1",true];
+// FACO >>>>
+_crash call fa_antiesp_add;
+// <<<< FACO					
 
 		// Disable simulation server side
 		_crash enableSimulation false;
@@ -117,6 +120,9 @@ while {true} do {
 			_nearby = _position nearObjects ["ReammoBox", sizeOf(_crashModel)];
 			{
 				_x setVariable ["permaLoot",true];
+// FACO >>>>
+_x call fa_antiesp_add;
+// <<<< FACO					
 			} forEach _nearBy;
 		};
 
