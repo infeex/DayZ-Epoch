@@ -151,7 +151,7 @@ onEachFrame {
 	};
 	
 	//if (p1_frameno % 3 == 0) then { call stream_ntg; }; // new town generator
-	if (p1_frameno % 1625 == 1) then {
+	if (p1_frameno % 1500 == 1) then {
 		call p1_resetBisLibs;
 
 		_x = diag_fpsmin;
@@ -196,12 +196,12 @@ onEachFrame {
 			dayz_currentDay = _day;
 		};
 	};
-
+	
 	if (p1_frameno % 150 == 1) then {
 		call p1_epoch_dicloseCity;
 	};
 
-	if (p1_frameno % 1500 == 0) then {
+	if (p1_frameno % 1500 == 750) then {
 		_y = diag_fpsmin;
 		dayz_currentWeaponHolders = count ((getPosATL vehicle player) nearObjects ["ReammoBox",250]);
 		//diag_log format [ "%1: update dayz_currentWeaponHolders. fps: %2 -> %3",__FILE__, _y, diag_fpsmin,if (diag_fpsmin < 10) then {"!! <<<<<<<<<<<<<<<<<<<"} else {""} ];
