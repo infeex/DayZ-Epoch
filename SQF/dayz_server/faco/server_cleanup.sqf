@@ -64,8 +64,15 @@ sc_corpses = {
 				};
 			};
 		} forEach allDead;
+		_delQtyAnimal = 0;
+		{
+			if (local _x) then {
+				_x call dayz_perform_purge;
+				_delQtyAnimal = _delQtyAnimal + 1;
+			};
+		} forEach _animals;
 		if (_delQtyZ+_delQtyP+_addFlies > 0) then {
-			diag_log format ["%1: Deleted %2 uncontrolled zombies and %3 dead character bodies, added %4 flies", __FILE__, _delQtyZ, _delQtyP, _addFlies ];
+			diag_log format ["%1: Deleted %2 uncontrolled zombies, %5 uncontrolled animals  and %3 dead character bodies, added %4 flies", __FILE__, _delQtyZ, _delQtyP, _addFlies, _delQtyAnimal ];
 		};
 	};
 };

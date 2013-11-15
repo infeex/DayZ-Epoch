@@ -403,7 +403,7 @@ if (isServer and isNil "sm_done") then {
 		// Epoch Events
 		_id = [] spawn server_spawnEvents;
 		// server cleanup
-		_id = [] execFSM "\z\addons\dayz_server\system\server_cleanup.fsm";
+		//_id = [] execFSM "\z\addons\dayz_server\system\server_cleanup.fsm"; // FACO
 
 		// spawn debug box
 		_debugMarkerPosition = getMarkerPos "respawn_west";

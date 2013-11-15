@@ -7,10 +7,12 @@ private ["_object","_type","_objectID","_uid","_lastUpdate","_needUpdate","_obje
 #include "\z\addons\dayz_server\compile\server_toggle_debug.hpp"
 
 _object = 	_this select 0;
-_type = 	_this select 1;
-_forced = if (count _this == 3) then {_this select 2} else {false};
 
 if ((isNil "_object") OR {(isNull _object)}) exitWith {};
+
+_type = 	_this select 1;
+_isbuildable = _type in dayz_allowedObjects;
+_forced = if (count _this == 3) then {_this select 2} else {false};
 
 _getoid = {
 	_objectID = _object getVariable ["ObjectID",nil];
@@ -28,7 +30,7 @@ _objectID = "0";
 _uid = "0";
 call _getoid;
 
-if (((typeOf _object == "ParachuteWest") OR {((_uid != "0") AND {!((typeOf _object) in SafeObjects)})}) OR {(_objectID == "0" AND _uid == "0" )}) exitWith {
+if (((typeOf _object == "ParachuteWest") OR {((_uid != "0") AND {!_isbuildable})}) OR {(_objectID == "0" AND _uid == "0" )}) exitWith {
 	diag_log format ["%1: Error: Won't save %2  ObjectID=%3(%7) ObjectUID=%4(%9) typeOf=%5 SafeObjects=%6", __FILE__, _object, _objectID, _uid, typeOf _object, SafeObjects, _object getVariable ["ObjectID", "?"], _object getVariable ["ObjectUID", "?"]];
 };
 
@@ -64,15 +66,15 @@ _object_position = { // position and fuel
 
 _object_inventory = {
 	private["_inventory","_previous","_key"];
-	if (_object isKindOf "TrapItems") then {
-		_inventory = [_object getVariable ["armed", false]];
-	} else {
+//	if (_object isKindOf "TrapItems") then {
+//		_inventory = [_object getVariable ["armed", false]];
+//	} else {
 		_inventory = [
 			getWeaponCargo _object,
 			getMagazineCargo _object,
 			getBackpackCargo _object
 		];
-	};
+//	};
 	_inventory = str _inventory;
 	if (_object getVariable["lastInventory",""] != _inventory) then {
 		_object setVariable["lastInventory",_inventory];

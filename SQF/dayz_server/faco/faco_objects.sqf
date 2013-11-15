@@ -3,6 +3,10 @@
         Please request permission to use/alter/distribute from the author (facoptere@gmail.com)
 */
 
+server_updateObject = {
+#include "server_updateObject.sqf" 
+};
+
 fa_setvehevent = {
 	_v = _this select 0;
 	_pos = _this select 1;
