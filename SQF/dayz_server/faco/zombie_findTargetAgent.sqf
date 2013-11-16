@@ -6,6 +6,7 @@
 
 private ["_target","_targets","_localtargets","_remotetargets", "_remotetargets_changed", "_idx", "_values", "_penalty", "_idx" ];
 _agent = _this;
+if (isNull _agent) exitWith {ObjNull};
 prev_target = objNull;
 //if (isNil "prev_target") then { prev_target = objNull; };
 //_target = prev_target;
@@ -16,6 +17,7 @@ _range = 50;
 
 
 _localtargets = _agent getVariable ["localtargets",[]];
+if (isNil "_localtargets") then { _localtargets = []; }; // bug workaround?
 _remotetargets = _agent getVariable ["remotetargets",[]];
 _remotetargets_changed = false;
 
@@ -100,7 +102,7 @@ _incrementknown = {
 		if (_idx >= 0) then {
 			_count = _iknowitcount select _idx;
 			if (isNil "_count") then { _count = 0; };
-			if ((!isNil "_count") AND {(_count > 20)})then {
+			if ((!isNil "_count") AND {(_count > 10)})then {
 				_target = objNull;
 			}
 			else {

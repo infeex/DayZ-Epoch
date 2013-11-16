@@ -5,7 +5,7 @@
 
 private ["_object","_type","_objectID","_uid","_lastUpdate","_needUpdate","_object_position","_object_inventory","_object_damage","_isNotOk", "_i"];
 
-#include "\z\addons\dayz_server\compile\server_toggle_debug.hpp"
+//#include "\z\addons\dayz_server\compile\server_toggle_debug.hpp"
 
 _object = 	_this select 0;
 
@@ -32,7 +32,7 @@ _uid = "0";
 call _getoid;
 
 if (((typeOf _object == "ParachuteWest") OR {((_uid != "0") AND {!_isbuildable})}) OR {(_objectID == "0" AND _uid == "0" )}) exitWith {
-	diag_log format ["%1: Error: Won't save %2  ObjectID=%3(%7) ObjectUID=%4(%9) typeOf=%5 SafeObjects=%6", __FILE__, _object, _objectID, _uid, typeOf _object, SafeObjects, _object getVariable ["ObjectID", "?"], _object getVariable ["ObjectUID", "?"]];
+	diag_log format ["%1: Error: Won't save %2  ObjectID=%3(%7) ObjectUID=%4(%9) typeOf=%5 SafeObjects=%6", __FILE__, _object, _objectID, _uid, typeOf _object, dayz_allowedObjects, _object getVariable ["ObjectID", "?"], _object getVariable ["ObjectUID", "?"]];
 };
 
 _object_position = { // position and fuel

@@ -7,6 +7,8 @@
 dayz_currentGlobalZombies=0;
 dayz_currentGlobalAnimals=0;
 dayz_CurrentNearByZombies=0;
+dayz_currentWeaponHolders=0;
+dayz_maxMaxWeaponHolders=80;
 dayz_spawnZombies=0;
 p1_frameno=0;
 p1_wasblocked=0;
@@ -150,7 +152,7 @@ onEachFrame {
 		p1_lowfpsCtr = 0 max (p1_lowfpsCtr -1); 
 	};
 	
-	//if (p1_frameno % 3 == 0) then { call stream_ntg; }; // new town generator
+	if (p1_frameno % 3 == 0) then { call stream_ntg; }; // new town generator
 	if (p1_frameno % 1500 == 1) then {
 		call p1_resetBisLibs;
 
@@ -209,7 +211,7 @@ onEachFrame {
 
 	if (p1_frameno % 5 == 4) then {
 		dayz_maxNearByZombies = 20;
-		dayz_maxGlobalZeds = 500;
+		dayz_maxGlobalZeds = 450;
 		dayz_maxLocalZombies = 30 min floor (2 * dayz_maxGlobalZeds / (count playableUnits));  
 		switch true do {
 			case (isNil "dayz_sg_state"): { // init 

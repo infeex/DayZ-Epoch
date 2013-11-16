@@ -70,7 +70,7 @@ sc_corpses = {
 				_x call dayz_perform_purge;
 				_delQtyAnimal = _delQtyAnimal + 1;
 			};
-		} forEach _animals;
+		} forEach (allMissionObjects "CAAnimalBase");
 		if (_delQtyZ+_delQtyP+_addFlies > 0) then {
 			diag_log format ["%1: Deleted %2 uncontrolled zombies, %5 uncontrolled animals  and %3 dead character bodies, added %4 flies", __FILE__, _delQtyZ, _delQtyP, _addFlies, _delQtyAnimal ];
 		};
@@ -177,7 +177,7 @@ sc_playershivewrite = {
 							_x setVariable [ "scu_sync_dmg", _odamage];
 						};
 						if ((diag_tickTime - _otime > 600) OR {((_pos distance _opos > 50) OR {(_odamage != _damage)})}) then {
-							[_x, nil, true] call server_playerSync;
+							[_x, [], true, true] call server_playerSync;
 							_x setVariable [ "scu_sync_time", diag_tickTime];
 							_x setVariable [ "scu_sync_pos", _pos];
 							_x setVariable [ "scu_sync_dmg", _damage];

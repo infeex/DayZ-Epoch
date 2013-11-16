@@ -47,7 +47,7 @@ fa_antiesp_init = {
 	fa_antiesp_quarantine_X = -500 + ((getMarkerPos "respawn_west") select 0);
 	fa_antiesp_quarantine_Y = -500 + ((getMarkerPos "respawn_west") select 1);
 	fa_antiesp_quarantine_index = 0;
-	diag_log format [ "%1::inited  cell size: %1x%2", fa_antiesp_cellX, fa_antiesp_cellY ];
+	diag_log format [ "%1::inited  cell size: %2x%3", __FILE__,fa_antiesp_cellX, fa_antiesp_cellY ];
 	fa_antiesp_start = false;
 };
 
@@ -66,7 +66,7 @@ fa_antiesp_add = {
 			}
 			else {
 				fa_antiesp_toAdd set [ count fa_antiesp_toAdd, _this ]; // enqueue object, will be added in state 3.
-				//diag_log format [ "%1 enqueue added %2", __FILE__, _this];
+				diag_log format [ "%1 enqueue added %2", __FILE__, _this];
 			};
 		};
 	};

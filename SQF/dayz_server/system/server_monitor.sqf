@@ -14,7 +14,7 @@ diag_log "HIVE: Starting";
 
 waituntil{isNil "sm_done"}; // prevent server_monitor be called twice (bug during login of the first player)
 
-#include "\z\addons\dayz_server\faco\fa_hiveMaintenance.hpp"
+#include "\z\addons\dayz_server\faco\fa_hiveMaintenance.sqf"
 #include "\z\addons\dayz_server\faco\antiESP.sqf"
 call fa_antiesp_init; // call early, before spawning anything;
 //Set the Time
@@ -103,7 +103,7 @@ if (isServer and isNil "sm_done") then {
 		[_objectArray, EMPTY_TENTS_GLOBAL_LIMIT, EMPTY_TENTS_USER_LIMIT] call fa_removeExtraTents;
 #endif
 		// check vehicles count
-		[_objectArray] call fa_checkVehicles;
+		//[_objectArray] call fa_checkVehicles;
 	};
 
 	// # START OF STREAMING #
@@ -331,7 +331,7 @@ if (isServer and isNil "sm_done") then {
 	diag_log ("HIVE: Spawning # of Vehicles: " + str(_vehLimit));
 	if(_vehLimit > 0) then {
 		for "_x" from 1 to _vehLimit do {
-			[] spawn spawn_vehicles;
+			call spawn_vehicles; //FACO
 		};
 	};
 	//  spawn_roadblocks
@@ -373,11 +373,17 @@ if (isServer and isNil "sm_done") then {
 	};
 	call faco_initclientac;
 	{
-		if (_x isKindOf "AllVehicles") then {
-			[_x,getPosASL _x, getDir _x] call fa_setvehevent; // eh logs getin getout
-			_x call faco_initVehEH; // eh antitp
-		};
-	} forEach dayz_serverObjectMonitor;
+		{
+			if (local _x) then {
+				_worldspace = [ direction _x, getPosATL _x] call fa_staywithus;
+				_x setDir (_worldspace select 0);
+				_x setPosATL (_worldspace select 1);
+				[_x,getPosASL _x, getDir _x] call fa_setvehevent; // eh logs getin getout
+				_x call faco_initVehEH; // eh anti tp / anti esp
+				_x call fa_antiesp_add; // anti esp registration
+			};
+		} forEach (allMissionObjects _x);
+	} forEach dayz_updateObjects;
 	[]spawn faco_anticheat;
 	Facodev=60;
 	[]spawn {
@@ -391,6 +397,8 @@ if (isServer and isNil "sm_done") then {
 
 	// antiwallhack
 	call compile preprocessFileLineNumbers "\z\addons\dayz_server\faco\fa_antiwallhack.sqf";
+	// redefine variable from variable.sqf????
+	DZE_FriendlySaving = true;
 // FACO <<
 	allowConnection = true;
 

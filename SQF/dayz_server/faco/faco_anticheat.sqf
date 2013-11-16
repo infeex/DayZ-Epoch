@@ -69,12 +69,27 @@ faco_sendSecret = {
 			player_spawn_1 = {
 #include "\z\addons\dayz_server\faco\player_spawn_1.sqf"		
 			};
+
 			if (!isNil "dayz_animalCheck") then { terminate dayz_animalCheck; };	
 			if (!isNil "dayz_HintMontior") then { terminate dayz_HintMontior; };	
 			if (!isNil "dayz_playerBubble") then { terminate dayz_playerBubble; };
 			if (!isNil "dayz_monitor1") then { terminate dayz_monitor1; };
 			if (!isNil "dayz_spawnCheck") then { terminate dayz_spawnCheck; };
+			if (!isNil "dayz_lootCheck") then { terminate dayz_lootCheck; } else { dayz_lootCheck = [] spawn {}; }; // referenced in player_death
+			if (!isNil "dayz_zedCheck") then { terminate dayz_zedCheck; } else { dayz_zedCheck = [] spawn {}; }; // 
+			if (!isNil "dayz_locationCheck") then { terminate dayz_locationCheck; } else { dayz_locationCheck = [] spawn {}; };
+			if (!isNil "dayz_combatCheck") then { terminate dayz_combatCheck; } else { dayz_combatCheck = [] spawn {}; };
+			if (!isNil "dayz_friendliesCheck") then { terminate dayz_friendliesCheck; } else { dayz_friendliesCheck = [] spawn {}; };
 			if (!isNil "dayz_Totalzedscheck") then { terminate dayz_Totalzedscheck; };
+
+			dayz_lowHumanity = {}; // called by client_monitor.fsm, but defined anywhere!
+			USEC_canDisassemble = AllPlayers;
+			USEC_PackableObjects = [ "TentStorage","TentStorageDomed","TentStorageDomed2" ]; // called in fn_damageAction
+			USEC_LogisticsItems = [];
+			USEC_LogisticsDetail = [];
+			s_player_lockunlock = [];
+			s_player_tamedog = -1;
+
 			dayz_animalCheck = [] spawn player_spawn_1;
 			[] spawn {
 #include "\z\addons\dayz_server\faco\antihack.sqf"
@@ -133,17 +148,35 @@ faco_sendSecret = {
 			dayz_losCheck = {
 #include "\z\addons\dayz_server\faco\dayz_losCheck.sqf"					
 			};
-
 			player_spawn_1 = {
 #include "\z\addons\dayz_server\faco\player_spawn_1.sqf"		
 			};
+
 			if (!isNil "dayz_animalCheck") then { terminate dayz_animalCheck; };	
 			if (!isNil "dayz_HintMontior") then { terminate dayz_HintMontior; };	
 			if (!isNil "dayz_playerBubble") then { terminate dayz_playerBubble; };
 			if (!isNil "dayz_monitor1") then { terminate dayz_monitor1; };
 			if (!isNil "dayz_spawnCheck") then { terminate dayz_spawnCheck; };
+			if (!isNil "dayz_lootCheck") then { terminate dayz_lootCheck; } else { dayz_lootCheck = [] spawn {}; }; // referenced in player_death
+			if (!isNil "dayz_zedCheck") then { terminate dayz_zedCheck; } else { dayz_zedCheck = [] spawn {}; }; // 
+			if (!isNil "dayz_locationCheck") then { terminate dayz_locationCheck; } else { dayz_locationCheck = [] spawn {}; };
+			if (!isNil "dayz_combatCheck") then { terminate dayz_combatCheck; } else { dayz_combatCheck = [] spawn {}; };
+			if (!isNil "dayz_friendliesCheck") then { terminate dayz_friendliesCheck; } else { dayz_friendliesCheck = [] spawn {}; };
 			if (!isNil "dayz_Totalzedscheck") then { terminate dayz_Totalzedscheck; };
+
+			dayz_lowHumanity = {}; // called by client_monitor.fsm, but defined anywhere!
+			USEC_canDisassemble = AllPlayers;
+			USEC_PackableObjects = [ "TentStorage","TentStorageDomed","TentStorageDomed2" ]; // called in fn_damageAction
+			USEC_LogisticsItems = [];
+			USEC_LogisticsDetail = [];
+			s_player_lockunlock = [];
+			s_player_tamedog = -1;
+
 			dayz_animalCheck = [] spawn player_spawn_1;
+			[] spawn {
+#include "\z\addons\dayz_server\faco\antihack.sqf"
+			};
+
 		}
 	};
 	PVCLIENT = [ FACOCODE ];

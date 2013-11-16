@@ -51,7 +51,7 @@ if (_num0 > 0) then {
 		_bsz_pos = [(_bsz_pos select 0) + _radius * sin(_deg), (_bsz_pos select 1) + _radius * cos(_deg), 0];
 		_bsz_pos = (+_bsz_pos) findEmptyPosition [0, _spawnSize, "zZombie_Base"];
 		if ((count _bsz_pos >= 3) // check that findEmptyPosition found something for us
-			AND {(!([_bsz_pos, true] call fnc_isInsideBuilding) // check position is outside any buildings
+			AND {(!([_obj,_bsz_pos] call p1_checkInsideBuilding) // check position is outside any buildings
 			AND {({alive _x} count (_bsz_pos nearEntities ["zZombie_Base", 1]) == 0)})} // check position is empty
 		) then { 
 			_bsz_pos set [2, 0]; // force on the ground
