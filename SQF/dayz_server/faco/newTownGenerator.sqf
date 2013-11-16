@@ -1,3 +1,5 @@
+// this file is not uploaded to clients
+
 /*
         Created exclusively for ArmA2:OA - Epoch DayZ Mod.
         Please request permission to use/alter/distribute from the author (facoptere@gmail.com)

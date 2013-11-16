@@ -1,5 +1,5 @@
 /*
-        Created exclusively for ArmA2:OA - DayZMod.
+        Created exclusively for ArmA2:OA - DayZEpoch Mod.
         Please request permission to use/alter/distribute from the author (facoptere@gmail.com)
 */
 

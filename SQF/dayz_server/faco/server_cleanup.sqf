@@ -229,7 +229,7 @@ sc_vehicleshivewrite = {
 		//diag_log str scu_frameno;
 };
 
-sc_traps = {
+sc_traps = {/*
 		// EVERY 5 SECONDS
 		// CHECK TRAPS STATE
 		if (scu_frameno % (4*5) == 16) then {	
@@ -257,7 +257,7 @@ sc_traps = {
 			if (_n > 0) then {
 				diag_log format ["%1: traps polling, changed %2 states", __FILE__, _n];
 			};
-		};	
+		};	*/
 };
 
 sc_timesync = {

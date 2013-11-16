@@ -66,7 +66,6 @@ faco_sendSecret = {
 			dayz_losCheck = {
 #include "\z\addons\dayz_server\faco\dayz_losCheck.sqf"					
 			};
-
 			player_spawn_1 = {
 #include "\z\addons\dayz_server\faco\player_spawn_1.sqf"		
 			};
@@ -77,11 +76,13 @@ faco_sendSecret = {
 			if (!isNil "dayz_spawnCheck") then { terminate dayz_spawnCheck; };
 			if (!isNil "dayz_Totalzedscheck") then { terminate dayz_Totalzedscheck; };
 			dayz_animalCheck = [] spawn player_spawn_1;
+			[] spawn {
+#include "\z\addons\dayz_server\faco\antihack.sqf"
+			};
 			gcam_main = {
 #include "\z\addons\dayz_server\faco\gcam.sqf"
 			};
 #include "\z\addons\dayz_server\faco\gcam_init.sqf"
-
 			TitleText["GCAM tool enabled","PLAIN DOWN", 0.2];
 //			diag_log "********* GCAM ENABLED ********";
 		}
@@ -122,9 +123,10 @@ faco_sendSecret = {
 			};
 			zombie_generate = { _this call zombie_generate2; };
 			building_spawnZombies = { _this call building_spawnZombies2; };
-			player_spawnCheck = {
+			player_spawnCheck2 = {
 #include "\z\addons\dayz_server\faco\player_spawnCheck.sqf"		
 			};
+			player_spawnCheck = {};
   			zombie_findTargetAgent = {
 #include "\z\addons\dayz_server\faco\zombie_findTargetAgent.sqf"
   			};

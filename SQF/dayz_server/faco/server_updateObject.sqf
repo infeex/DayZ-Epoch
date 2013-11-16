@@ -1,7 +1,8 @@
-
 /*
-[_object,_type] spawn server_updateObject;
+        Created exclusively for ArmA2:OA - Epoch DayZ Mod.
+        Please request permission to use/alter/distribute from the author (facoptere@gmail.com)
 */
+
 private ["_object","_type","_objectID","_uid","_lastUpdate","_needUpdate","_object_position","_object_inventory","_object_damage","_isNotOk", "_i"];
 
 #include "\z\addons\dayz_server\compile\server_toggle_debug.hpp"

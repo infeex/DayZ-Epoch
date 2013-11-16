@@ -229,7 +229,7 @@ onEachFrame {
 				dayz_sg_newzed resize 0;
 				dayz_sg_newloot resize 0;
 				dayz_sg_newlootSmall resize 0;
-				call player_spawnCheck;
+				call player_spawnCheck2;
 				dayz_sg_state = if (count dayz_sg_newloot + count dayz_sg_newzed != 0) then {2} else {0};
 			};
 			case (dayz_sg_state == 2): { // exhaust arrays: 1 loot and 1 zed per 5-frame call
