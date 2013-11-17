@@ -192,6 +192,9 @@ if (isServer and isNil "sm_done") then {
 				_object setVariable ["OEMPos", _pos, true];
 			};
 			
+			_worldspace = [_dir, +(_pos)] call fa_staywithus;
+			_dir = _worldspace select 0;
+			_pos = +(_worldspace select 1);
 			_object setdir _dir;
 			_object setposATL _pos;
 			_object setDamage _damage;
@@ -288,45 +291,7 @@ if (isServer and isNil "sm_done") then {
 	} forEach _objectArray;
 	// # END OF STREAMING #
 
-
-	// preload server traders menu data into cache
-	{
-		// get tids
-		_traderData = call compile format["menu_%1;",_x];
-		if(!isNil "_traderData") then {
-			{
-				_traderid = _x select 1;
-
-				_retrader = [];
-
-				_key = format["CHILD:399:%1:",_traderid];
-				_data = "HiveEXT" callExtension _key;
-
-				//diag_log "HIVE: Request sent";
-		
-				//Process result
-				_result = call compile format ["%1",_data];
-				_status = _result select 0;
-		
-				if (_status == "ObjectStreamStart") then {
-					_val = _result select 1;
-					//Stream Objects
-					//diag_log ("HIVE: Commence Menu Streaming...");
-					call compile format["ServerTcache_%1 = [];",_traderid];
-					for "_i" from 1 to _val do {
-						_data = "HiveEXT" callExtension _key;
-						_result = call compile format ["%1",_data];
-						call compile format["ServerTcache_%1 set [count ServerTcache_%1,%2]",_traderid,_result];
-						_retrader set [count _retrader,_result];
-					};
-					//diag_log ("HIVE: Streamed " + str(_val) + " objects");
-				};
-
-			} forEach (_traderData select 0);
-		};
-	} forEach serverTraders;
-
-	//  spawn_vehicles
+	//  spawn missing vehicles
 	_vehLimit = MaxVehicleLimit - _totalvehicles;
 	diag_log ("HIVE: Spawning # of Vehicles: " + str(_vehLimit));
 	if(_vehLimit > 0) then {
@@ -334,20 +299,59 @@ if (isServer and isNil "sm_done") then {
 			call spawn_vehicles; //FACO
 		};
 	};
-	//  spawn_roadblocks
-	diag_log ("HIVE: Spawning # of Debris: " + str(MaxDynamicDebris));
-	for "_x" from 1 to MaxDynamicDebris do {
-		[] spawn spawn_roadblocks;
-	};
-	//  spawn_ammosupply at server start 1% of roadblocks
-	diag_log ("HIVE: Spawning # of Ammo Boxes: " + str(MaxAmmoBoxes));
-	for "_x" from 1 to MaxAmmoBoxes do {
-		[] spawn spawn_ammosupply;
-	};
-	// call spawning mining veins
-	diag_log ("HIVE: Spawning # of Veins: " + str(MaxMineVeins));
-	for "_x" from 1 to MaxMineVeins do {
-		[] spawn spawn_mineveins;
+	
+	[] spawn { //FACO
+		//  spawn_roadblocks
+		diag_log ("HIVE: Spawning # of Debris: " + str(MaxDynamicDebris));
+		for "_x" from 1 to MaxDynamicDebris do {
+			 call spawn_roadblocks;//FACO
+		};
+		//  spawn_ammosupply at server start 1% of roadblocks
+		diag_log ("HIVE: Spawning # of Ammo Boxes: " + str(MaxAmmoBoxes));
+		for "_x" from 1 to MaxAmmoBoxes do {
+			call spawn_ammosupply;//FACO
+		};
+		// preload server traders menu data into cache // FACO
+		{
+			// get tids
+			_traderData = call compile format["menu_%1;",_x];
+			if(!isNil "_traderData") then {
+				{
+					_traderid = _x select 1;
+
+					_retrader = [];
+
+					_key = format["CHILD:399:%1:",_traderid];
+					_data = "HiveEXT" callExtension _key;
+
+					//diag_log "HIVE: Request sent";
+		
+					//Process result
+					_result = call compile format ["%1",_data];
+					_status = _result select 0;
+		
+					if (_status == "ObjectStreamStart") then {
+						_val = _result select 1;
+						//Stream Objects
+						//diag_log ("HIVE: Commence Menu Streaming...");
+						call compile format["ServerTcache_%1 = [];",_traderid];
+						for "_i" from 1 to _val do {
+							_data = "HiveEXT" callExtension _key;
+							_result = call compile format ["%1",_data];
+							call compile format["ServerTcache_%1 set [count ServerTcache_%1,%2]",_traderid,_result];
+							_retrader set [count _retrader,_result];
+						};
+						//diag_log ("HIVE: Streamed " + str(_val) + " objects");
+					};
+
+				} forEach (_traderData select 0);
+			};
+		} forEach serverTraders;
+		// call spawning mining veins
+		diag_log ("HIVE: Spawning # of Veins: " + str(MaxMineVeins));
+		for "_x" from 1 to MaxMineVeins do {
+			call spawn_mineveins;//FACO
+		};
 	};
 
 	if(isnil "dayz_MapArea") then {
@@ -375,9 +379,6 @@ if (isServer and isNil "sm_done") then {
 	{
 		{
 			if (local _x) then {
-				_worldspace = [ direction _x, getPosATL _x] call fa_staywithus;
-				_x setDir (_worldspace select 0);
-				_x setPosATL (_worldspace select 1);
 				[_x,getPosASL _x, getDir _x] call fa_setvehevent; // eh logs getin getout
 				_x call faco_initVehEH; // eh anti tp / anti esp
 				_x call fa_antiesp_add; // anti esp registration
@@ -397,6 +398,24 @@ if (isServer and isNil "sm_done") then {
 
 	// antiwallhack
 	call compile preprocessFileLineNumbers "\z\addons\dayz_server\faco\fa_antiwallhack.sqf";
+	"PVDZ_sec_atp" addPublicVariableEventHandler { 
+		_x = _this select 1;
+		if (typeName _x == "STRING") then {
+			diag_log _x;
+		}
+		else {
+			_unit = _x select 0;
+			_source = _x select 1;
+			if (((!(isNil {_source})) AND {(!(isNull _source))}) AND {((_source isKindOf "CAManBase") AND {(owner _unit != owner _source)})}) then {
+				diag_log format ["P1ayer %1 hit by %2 %3 from %4 meters",
+					_unit call fa_plr2Str,  _source call fa_plr2Str, _x select 2, _x select 3];
+				if (_unit getVariable["processedDeath", 0] == 0) then {
+					_unit setVariable [ "attacker", name _source ];
+					_unit setVariable [ "noatlf4", diag_ticktime ]; // server-side "not in combat" test, if player is not already dead
+				};
+			};
+		};
+	};
 	// redefine variable from variable.sqf????
 	DZE_FriendlySaving = true;
 // FACO <<

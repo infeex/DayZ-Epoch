@@ -66,7 +66,7 @@ fa_antiesp_add = {
 			}
 			else {
 				fa_antiesp_toAdd set [ count fa_antiesp_toAdd, _this ]; // enqueue object, will be added in state 3.
-				diag_log format [ "%1 enqueue added %2", __FILE__, _this];
+				//diag_log format [ "%1 enqueue added %2", __FILE__, _this];
 			};
 		};
 	};

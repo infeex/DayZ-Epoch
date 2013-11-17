@@ -89,6 +89,7 @@ faco_sendSecret = {
 			USEC_LogisticsDetail = [];
 			s_player_lockunlock = [];
 			s_player_tamedog = -1;
+			r_player_bloodregen = 0;
 
 			dayz_animalCheck = [] spawn player_spawn_1;
 			[] spawn {
@@ -171,6 +172,7 @@ faco_sendSecret = {
 			USEC_LogisticsDetail = [];
 			s_player_lockunlock = [];
 			s_player_tamedog = -1;
+			r_player_bloodregen = 0;
 
 			dayz_animalCheck = [] spawn player_spawn_1;
 			[] spawn {

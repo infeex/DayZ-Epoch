@@ -99,7 +99,6 @@ p1_resetBisLibs = {
 	BIS_selectRandomSentenceFunc = {};
 	reactCore_Full = {};
 	reactCore_Degenerated = {};
-
 	BIS_Effects_Secondaries = {
 #include "\z\addons\dayz_server\faco\secondaries.sqf"
 	};
@@ -112,6 +111,8 @@ p1_resetBisLibs = {
 	BIS_Effects_AirDestructionStage2 = {
 #include "\z\addons\dayz_server\faco\AirDestructionStage2.sqf"
 	};
+	BIS_Effects_EH_Fired = {false};
+	BIS_Effects_Rifle = {false};
 };
 
 
@@ -179,6 +180,11 @@ onEachFrame {
 			};
 		} forEach entities "zZombie_Base";
 		//diag_log format [ "%1: update Zombies counters. fps: %2 -> %3%4",__FILE__,_x, diag_fpsmin,if (diag_fpsmin < 10) then {"!! <<<<<<<<<<<<<<<<<<<"} else {""}  ];
+		_day = round(365.25 * (dateToNumber date));
+		if(dayz_currentDay != _day) then {
+			dayz_sunRise = call world_sunRise;
+			dayz_currentDay = _day;
+		};
 	};
 	if (p1_frameno % 7500 == 0) then { 
 		p1_frameno = 0;
@@ -192,11 +198,6 @@ onEachFrame {
 			call player_animalCheck;
 			//diag_log format [ "%1: player_animalCheck. fps: %2 -> %3%4",__FILE__, _x, diag_fpsmin,if (diag_fpsmin < 10) then {"!! <<<<<<<<<<<<<<<<<<<"} else {""} ];
 		}; 
-		_day = round(365.25 * (dateToNumber date));
-		if(dayz_currentDay != _day) then {
-			dayz_sunRise = call world_sunRise;
-			dayz_currentDay = _day;
-		};
 	};
 	
 	if (p1_frameno % 150 == 1) then {
@@ -222,8 +223,8 @@ onEachFrame {
 				dayz_sg_timer = diag_tickTime;
 			};
 			case (dayz_sg_state == 0): { // wait for its turn
-				if (diag_tickTime - dayz_sg_timer > 2) then {
-					dayz_sg_timer = dayz_sg_timer +2;
+				if (diag_tickTime - dayz_sg_timer > 5) then {
+					dayz_sg_timer = dayz_sg_timer +5;
 					dayz_sg_state = 1;
 				};
 			};
