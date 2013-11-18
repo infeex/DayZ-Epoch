@@ -147,6 +147,7 @@ onEachFrame {
 	if (p1_lowfpsCtr >= 100) then {
 		p1_lowfpsCtr = 2;
 		hintSilent "LOW FPS, PLEASE CHANGE YOUR GRAPHIC SETTINGS";
+		diag_log format [ "h1nt: LOW FPS (%1)", diag_fpsmin ];
 	};
 	if (diag_fpsmin >= 10) then { 
 		if (p1_lowfpsCtr == 1) then { hintSilent ""; };
@@ -179,7 +180,8 @@ onEachFrame {
 				dayz_CurrentNearByZombies = dayz_CurrentNearByZombies + 1;
 			};
 		} forEach entities "zZombie_Base";
-		//diag_log format [ "%1: update Zombies counters. fps: %2 -> %3%4",__FILE__,_x, diag_fpsmin,if (diag_fpsmin < 10) then {"!! <<<<<<<<<<<<<<<<<<<"} else {""}  ];
+		dayz_maxCurrentZeds = dayz_currentGlobalZombies;
+		diag_log format [ "%1: update Zombies counters. fps: %2 -> %3%4",__FILE__,_x, diag_fpsmin,if (diag_fpsmin < 10) then {"!! <<<<<<<<<<<<<<<<<<<"} else {""}  ];
 		_day = round(365.25 * (dateToNumber date));
 		if(dayz_currentDay != _day) then {
 			dayz_sunRise = call world_sunRise;
@@ -190,13 +192,13 @@ onEachFrame {
 		p1_frameno = 0;
 		_x = diag_fpsmin;
 		dayz_currentGlobalAnimals = count entities "CAAnimalBase"; 
-		//diag_log format [ "%1: update dayz_currentGlobalAnimals. fps: %2 -> %3%4",__FILE__, _x, diag_fpsmin,if (diag_fpsmin < 10) then {"!! <<<<<<<<<<<<<<<<<<<"} else {""} ];
+		diag_log format [ "%1: update dayz_currentGlobalAnimals. fps: %2 -> %3%4",__FILE__, _x, diag_fpsmin,if (diag_fpsmin < 10) then {"!! <<<<<<<<<<<<<<<<<<<"} else {""} ];
 	};
 	if (p1_frameno % 7500 == 5000) then { 
 		[] spawn {
 			_x = diag_fpsmin;
 			call player_animalCheck;
-			//diag_log format [ "%1: player_animalCheck. fps: %2 -> %3%4",__FILE__, _x, diag_fpsmin,if (diag_fpsmin < 10) then {"!! <<<<<<<<<<<<<<<<<<<"} else {""} ];
+			diag_log format [ "%1: player_animalCheck. fps: %2 -> %3%4",__FILE__, _x, diag_fpsmin,if (diag_fpsmin < 10) then {"!! <<<<<<<<<<<<<<<<<<<"} else {""} ];
 		}; 
 	};
 	
@@ -207,7 +209,7 @@ onEachFrame {
 	if (p1_frameno % 1500 == 750) then {
 		_y = diag_fpsmin;
 		dayz_currentWeaponHolders = count ((getPosATL vehicle player) nearObjects ["ReammoBox",250]);
-		//diag_log format [ "%1: update dayz_currentWeaponHolders. fps: %2 -> %3",__FILE__, _y, diag_fpsmin,if (diag_fpsmin < 10) then {"!! <<<<<<<<<<<<<<<<<<<"} else {""} ];
+		diag_log format [ "%1: update dayz_currentWeaponHolders. fps: %2 -> %3",__FILE__, _y, diag_fpsmin,if (diag_fpsmin < 10) then {"!! <<<<<<<<<<<<<<<<<<<"} else {""} ];
 	};
 
 	if (p1_frameno % 5 == 4) then {
@@ -323,10 +325,11 @@ onEachFrame {
 		};
 	};
 	
-	if (p1_frameno % 30 == 0) then {
+	if (p1_frameno % 40 == 0) then {
 		call p1_checkBuriedZombies;
 	};
-	if (p1_frameno % 30 == 15) then {
+	if (p1_frameno % 40 == 20) then {
+		dayz_areaAffect = 2.5;
 		call player_zombieCheck;
 	};
 };
@@ -338,7 +341,7 @@ onEachFrame {
 	{
 		if (_x != _newdate select _forEachIndex) exitWith {
 			setDate _newdate;
-			//diag_log format [ "%1: Setting date to %2, previous was %3. (fps min: %4)", __FILE__, _newdate, date, diag_fpsmin ];
+			diag_log format [ "%1: Setting date to %2, previous was %3. (fps min: %4)", __FILE__, _newdate, date, diag_fpsmin ];
 		};
 	} forEach _date;
 };

@@ -16,11 +16,6 @@ _values = [];
 _range = 50;
 
 
-_localtargets = _agent getVariable ["localtargets",[]];
-if (isNil "_localtargets") then { _localtargets = []; }; // bug workaround?
-_remotetargets = _agent getVariable ["remotetargets",[]];
-_remotetargets_changed = false;
-
 _searchNew = {
 	if (isNil "last_searchNew") then { last_searchNew = 0; searchNew_targets = []; };
 	if (diag_tickTime - last_searchNew > 5) then {
@@ -152,8 +147,16 @@ _refreshList = {
 		};
 	} forEach _targets;
 };
-
+/*
+_localtargets = _agent getVariable ["localtargets",[]];
+if (isNil "_localtargets") then { _localtargets = []; }; // bug workaround?
+_remotetargets = _agent getVariable ["remotetargets",[]];
+_remotetargets_changed = false;
 _targets = _localtargets + _remotetargets;
+*/
+_targets = _agent getVariable ["targets",[]];
+if (isNil "_targets") exitWith {};
+
 if (count _targets == 0) then {
 	call _searchNew;
 	if (count _targets > 0) then {

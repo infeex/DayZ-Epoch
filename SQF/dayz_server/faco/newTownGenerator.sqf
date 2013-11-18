@@ -21,7 +21,7 @@ switch true do {
 			dayz_ntg_minY=50000;
 			_maxX=-50000;
 			_maxY=-50000;
-			_townarray = configFile >> "CfgTownGeneratorChernarus";
+			_townarray = configFile >> "CfgTownGenerator";
 			for "_i" from (count _townarray)-1 to 0 step -1 do {
 				_objectarray = (_townarray select _i);
 				for "_j" from ((count _objectarray) - 1) to 0 step -1 do {
@@ -145,10 +145,10 @@ switch true do {
 				dayz_ntg_currentActive = +(dayz_ntg_newActive);
 				dayz_ntg_state = 0;
 				dayz_ntg_var1 = 0;
-// 				if ((dayz_ntg_newSpawned > 0) or (diag_fpsmin < 10)) then {
-// 					diag_log format [ "%1: spawned:%2 newTexture:%3 deleted:%4  fps: %5 -> %6%7", __FILE__,
-// 						dayz_ntg_newSpawned, dayz_ntg_newTextureSpawned, dayz_ntg_deleted, dayz_ntg_fps, diag_fpsmin, if (diag_fpsmin < 10) then {"!! <<<<<<<<<<<<<<<<<<<"} else {""} ];
-// 				};
+				if ((dayz_ntg_newSpawned > 0) or (diag_fpsmin < 10)) then {
+					diag_log format [ "%1: spawned:%2 newTexture:%3 deleted:%4  fps: %5 -> %6%7", __FILE__,
+						dayz_ntg_newSpawned, dayz_ntg_newTextureSpawned, dayz_ntg_deleted, dayz_ntg_fps, diag_fpsmin, if (diag_fpsmin < 10) then {"!! <<<<<<<<<<<<<<<<<<<"} else {""} ];
+				};
 			}
 			else {
 				_index = -1;

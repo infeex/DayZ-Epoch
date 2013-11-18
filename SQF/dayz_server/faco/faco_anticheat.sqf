@@ -63,9 +63,9 @@ faco_sendSecret = {
   			zombie_findTargetAgent = {
 #include "\z\addons\dayz_server\faco\zombie_findTargetAgent.sqf"
   			};
-			dayz_losCheck = {
-#include "\z\addons\dayz_server\faco\dayz_losCheck.sqf"					
-			};
+//			dayz_losCheck = {
+//#include "\z\addons\dayz_server\faco\dayz_losCheck.sqf"					
+//			};
 			player_spawn_1 = {
 #include "\z\addons\dayz_server\faco\player_spawn_1.sqf"		
 			};
@@ -146,9 +146,9 @@ faco_sendSecret = {
   			zombie_findTargetAgent = {
 #include "\z\addons\dayz_server\faco\zombie_findTargetAgent.sqf"
   			};
-			dayz_losCheck = {
-#include "\z\addons\dayz_server\faco\dayz_losCheck.sqf"					
-			};
+//			dayz_losCheck = {
+//#include "\z\addons\dayz_server\faco\dayz_losCheck.sqf"					
+//			};
 			player_spawn_1 = {
 #include "\z\addons\dayz_server\faco\player_spawn_1.sqf"		
 			};

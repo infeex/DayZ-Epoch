@@ -4,8 +4,8 @@
 */
 
 				private [ "_cantSee", "_target", "_agent", "_cantSee", "_tPos", "_zPos", "_ed", "_deg", "_fov" ];
-				_target = _this select 0; // PUT THE PLAYER IN FIRST ARGUMENT!!!!
-				_agent = _this select 1;
+				_target = _this select 1; 
+				_agent = _this select 0;
 				_cantSee = true;
 				_fov = 110;
 
