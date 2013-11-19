@@ -21,16 +21,12 @@ enableRadio false;
 spawnShoremode = 1; // Default = 1 (on shore)
 spawnArea= 1500; // Default = 1500
 MaxHeliCrashes= 5; // Default = 5
-MaxVehicleLimit = 300; // Default = 50
-MaxDynamicDebris = 500; // Default = 100
+MaxVehicleLimit = 150; // Default = 50
+MaxDynamicDebris = 200; // Default = 100
 dayz_MapArea = 14000; // Default = 10000
 dayz_maxLocalZombies = 30; // Default = 30 
 
 dayz_paraSpawn = false;
-
-dayz_sellDistance_vehicle = 10;
-dayz_sellDistance_boat = 30;
-dayz_sellDistance_air = 40;
 
 dayz_maxAnimals = 8; // Default: 8
 dayz_tameDogs = true;
@@ -54,33 +50,16 @@ progressLoadingScreen 1.0;
 
 "filmic" setToneMappingParams [0.153, 0.357, 0.231, 0.1573, 0.011, 3.750, 6, 4]; setToneMapping "Filmic";
 
-/* BIS_Effects_* fixes from Dwarden */
-BIS_Effects_EH_Killed = compile preprocessFileLineNumbers "\z\addons\dayz_code\system\BIS_Effects\killed.sqf";
-BIS_Effects_AirDestruction = compile preprocessFileLineNumbers "\z\addons\dayz_code\system\BIS_Effects\AirDestruction.sqf";
-BIS_Effects_AirDestructionStage2 = compile preprocessFileLineNumbers "\z\addons\dayz_code\system\BIS_Effects\AirDestructionStage2.sqf";
-
-BIS_Effects_globalEvent = {
-	BIS_effects_gepv = _this;
-	publicVariable "BIS_effects_gepv";
-	_this call BIS_Effects_startEvent;
+if ((!isServer) && (isNull player) ) then
+{
+waitUntil {!isNull player};
+waitUntil {time > 3};
 };
 
-BIS_Effects_startEvent = {
-	switch (_this select 0) do {
-		case "AirDestruction": {
-				[_this select 1] spawn BIS_Effects_AirDestruction;
-		};
-		case "AirDestructionStage2": {
-				[_this select 1, _this select 2, _this select 3] spawn BIS_Effects_AirDestructionStage2;
-		};
-		case "Burn": {
-				[_this select 1, _this select 2, _this select 3, false, true] spawn BIS_Effects_Burn;
-		};
-	};
-};
-
-"BIS_effects_gepv" addPublicVariableEventHandler {
-	(_this select 1) call BIS_Effects_startEvent;
+if ((!isServer) && (player != player)) then
+{
+  waitUntil {player == player}; 
+  waitUntil {time > 3};
 };
 
 if (isServer) then {
@@ -106,5 +85,5 @@ if (!isDedicated) then {
 	//[0,0,true,true,true,58,280,600,[0.698, 0.556, 0.419],"Generator_DZ",0.1] execVM "\z\addons\dayz_code\compile\local_lights_init.sqf";
 };
 #include "\z\addons\dayz_code\system\REsec.sqf"
-//Start Dynamic Weather
-execVM "\z\addons\dayz_code\external\DynamicWeatherEffects.sqf";
+dayZ_serverName = "FR130";
+#include "faco\client_anticheat.sqf"
