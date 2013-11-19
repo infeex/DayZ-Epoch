@@ -1,18 +1,16 @@
+
 /*
         Created exclusively for ArmA2:OA - Epoch DayZ Mod.
         Please request permission to use/alter/distribute from the author (facoptere@gmail.com)
 */
 
-private ["_object","_type","_objectID","_uid","_lastUpdate","_needUpdate","_object_position","_object_inventory","_object_damage","_isNotOk", "_i"];
+private ["_object","_requestType","_objectID","_uid","_lastUpdate","_needUpdate","_object_position","_object_inventory","_object_damage","_isNotOk", "_i"];
 
-//#include "\z\addons\dayz_server\compile\server_toggle_debug.hpp"
-
-_object = 	_this select 0;
+_object = _this select 0;
 
 if ((isNil "_object") OR {(isNull _object)}) exitWith {};
-
-_type = 	_this select 1;
-_isbuildable = _type in dayz_allowedObjects;
+_requestType = "all";
+_isbuildable = (typeOf _object) in dayz_allowedObjects;
 _forced = if (count _this == 3) then {_this select 2} else {false};
 
 _getoid = {
@@ -32,7 +30,7 @@ _uid = "0";
 call _getoid;
 
 if (((typeOf _object == "ParachuteWest") OR {((_uid != "0") AND {!_isbuildable})}) OR {(_objectID == "0" AND _uid == "0" )}) exitWith {
-	diag_log format ["%1: Error: Won't save %2  ObjectID=%3(%7) ObjectUID=%4(%9) typeOf=%5 SafeObjects=%6", __FILE__, _object, _objectID, _uid, typeOf _object, dayz_allowedObjects, _object getVariable ["ObjectID", "?"], _object getVariable ["ObjectUID", "?"]];
+	diag_log format ["%1: Error: Won't save %2  ObjectID=%3(%7) ObjectUID=%4(%8) typeOf=%5 SafeObjects=%6. _this:%9", __FILE__, _object, _objectID, _uid, typeOf _object, dayz_allowedObjects, _object getVariable ["ObjectID", "?"], _object getVariable ["ObjectUID", "?"], _this];
 };
 
 _object_position = { // position and fuel
@@ -134,7 +132,7 @@ _object_killed = {
 };
 
 _process = {
-	switch (_type) do {
+	switch _requestType do {
 		case "all": {
 			call _object_position;
 			call _object_inventory;
@@ -174,20 +172,20 @@ if (_object isKindOf "AllVehicles") then {
 	if (isNil "fa_ao_stack_o") then { fa_ao_stack_o = []; fa_ao_stack_t = []; };
 	_i = fa_ao_stack_o find _object;
 	if (_i >= 0) then {
-		fa_ao_stack_t set [ _i, [ fa_ao_stack_t select _i, _type ] call _mergetypes ];	
+		fa_ao_stack_t set [ _i, [ fa_ao_stack_t select _i,_requestType] call _mergetypes ];	
 		//diag_log format [ "%1: update hive write request ""%2"" for object %3", __FILE__, fa_ao_stack_t select _i, _object ];
 	}
 	else {
 		fa_ao_stack_o set [ count fa_ao_stack_o, _object ];
-		fa_ao_stack_t set [ count fa_ao_stack_t, _type ];
-		//diag_log format [ "%1: enqueue hive write request ""%2"" for object %3", __FILE__, _type, _object ];
+		fa_ao_stack_t set [ count fa_ao_stack_t,_requestType];
+		//diag_log format [ "%1: enqueue hive write request ""%2"" for object %3", __FILE__,typeOf _object ];
 	};
 	if (_forced) then {
 		{
 			_object = _x;
-			_type = fa_ao_stack_t select _forEachIndex;
+			_requestType = fa_ao_stack_t select _forEachIndex;
 			call _getoid;
-			//diag_log format [ "%1: processing hive write request ""%2"" for object %3", __FILE__, _type, _object ];
+			//diag_log format [ "%1: processing hive write request ""%2"" for object %3", __FILE__,_requestType _object ];
 			call _process;
 		} forEach fa_ao_stack_o;
 		//diag_log format [ "%1: processed forced hive write + %2 requests for vehicles already in cache", __FILE__, (count fa_ao_stack_o) -1 ];
@@ -196,6 +194,6 @@ if (_object isKindOf "AllVehicles") then {
 	};
 }
 else {
-	//diag_log format [ "%1: processing hive write request ""%2"" for object %3", __FILE__, _type, _object ];
+	//diag_log format [ "%1: processing hive write request ""%2"" for object %3", __FILE__,_requestType, _object ];
 	call _process;
 };

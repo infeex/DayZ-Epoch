@@ -416,6 +416,8 @@ if (isServer and isNil "sm_done") then {
 			};
 		};
 	};
+	// BIS Effects lib
+	call compile preprocessFileLineNumbers "\z\addons\dayz_server\faco\init.sqf";
 	// redefine variable from variable.sqf????
 	DZE_FriendlySaving = true;
 // FACO <<
