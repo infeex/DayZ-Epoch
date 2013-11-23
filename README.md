@@ -1,10 +1,8 @@
-
-**DayZ Epoch**
+**Facoptere's DayZ Epoch**
 ================
+Binaries: https://drive.google.com/folderview?id=0B7_lZXElfjRncEZqSlFsa005YVU&usp=sharing
 
-Experimental DayZ mod 
-
-http://dayzepoch.com
+Base on experimental DayZ mod: http://dayzepoch.com
 
 Based on DayZ Mod Community edition
 
