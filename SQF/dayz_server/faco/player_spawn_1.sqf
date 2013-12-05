@@ -203,25 +203,6 @@ p1_checkBuriedZombies = {
 	objNull
 };
 
-p1_epoch_dicloseCity = { // every 5 seconds
-	private ["_world","_nearestCity","_town","_first"];
-	
-	_world = toUpper(worldName); //toUpper(getText (configFile >> "CfgWorlds" >> (worldName) >> "description"));
-	_nearestCity = nearestLocations [getPos player, ["NameCityCapital","NameCity","NameVillage","NameLocal"],300];
-	if (count _nearestCity > 0) then {
-		_town = text (_nearestCity select 0); 
-		if(dayz_PreviousTown == "Wilderness") then {
-			dayz_PreviousTown = _town;
-		};
-		if(_town != dayz_PreviousTown) then {
-			_first = [_world,_town,""] spawn BIS_fnc_infoText;
-		};
-		dayz_PreviousTown = _town;
-	};
-
-	objNull
-};
-
 p1_spawnLootZeds = {
 	dayz_maxNearByZombies = 20;
 	dayz_maxGlobalZeds = 450;
@@ -360,12 +341,31 @@ p1_spawnAnimals = {
 	objNull
 };
 
+p1_epoch_dicloseCity = { // every 5 seconds
+	private ["_world","_nearestCity","_town","_first"];
+	
+	_world = toUpper(worldName); //toUpper(getText (configFile >> "CfgWorlds" >> (worldName) >> "description"));
+	_nearestCity = nearestLocations [getPos player, ["NameCityCapital","NameCity","NameVillage","NameLocal"],300];
+	if (count _nearestCity > 0) then {
+		_town = text (_nearestCity select 0); 
+		if(dayz_PreviousTown == "Wilderness") then {
+			dayz_PreviousTown = _town;
+		};
+		if(_town != dayz_PreviousTown) then {
+			_first = [_world,_town,""] spawn BIS_fnc_infoText;
+		};
+		dayz_PreviousTown = _town;
+	};
+
+	objNull
+};
+
 [
 	// period	offset	code <-> ctx				init code ->ctx								
 	 [ 0,	 	0,		p1_onEachFrame ], // SPECIAL: nul period -> code returns boolean asking to skip other codes
 	 [ 0.1,	 	0,		stream_ntg ],
-	 [ 0.2,	 	0.09,	p1_spawnLootZeds ],
-	 [ 0.2,	 	0.28,	p1_weather ],
+	 [ 0.1,	 	0.03,	p1_spawnLootZeds ],
+	 [ 0.1,	 	0.07,	p1_weather ],
 	 [ 1,	 	0.18,	p1_checkBuriedZombies ],
 	 [ 1, 		0.82,	player_zombieCheck ],
 	 [ 5,	 	2.45,	p1_epoch_dicloseCity ],

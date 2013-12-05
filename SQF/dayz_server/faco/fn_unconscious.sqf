@@ -21,6 +21,7 @@ if ((!r_player_handler1) and (r_handlerCount == 0)) then {
 	//["MED001",0,"Unconscious"] call fnc_usec_recordEventClient;
 	//diag_log "CLIENT: Unconscious...";
 	while {(r_player_unconscious)} do {
+		if (cameraView == "EXTERNAL") then {vehicle player switchCamera "INTERNAL";};
 		_ctrl1 ctrlSetPosition [(_ctrl1Pos select 0),(_ctrl1Pos select 1),(_ctrl1Pos select 2),((0.136829 * safezoneH) * (1 -(r_player_timeout / _totalTimeout)))];
 		_ctrl1 ctrlCommit 1;
 		playSound "heartbeat_1";
@@ -29,8 +30,8 @@ if ((!r_player_handler1) and (r_handlerCount == 0)) then {
 		_isInLocation = false; //getPos player in LHA_Location;
 		_inVehicle = (vehicle player != player);
 		_bloodLow = ((r_player_blood/r_player_bloodTotal) < 0.5);
-		if ((surfaceIsWater (getPosASL player)) and !_isOnDeck and !_inVehicle) then {
-			player setpos [(getPosASL player select 0),(getPosASL player select 1),0.3];
+		if ((surfaceIsWater (getPosASL player)) and !_inVehicle) then {
+			player setposASL [(getPosASL player select 0),(getPosASL player select 1),0.3];
 		};
 		
 		if(_timeout == 0) then {
