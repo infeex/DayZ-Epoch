@@ -1,0 +1,72 @@
+/*
+        Created exclusively for ArmA2:OA - Epoch DayZ Mod.
+        Please request permission to use/alter/distribute from the author (facoptere@gmail.com)
+*/
+
+class FSM {
+   fsmName = "server_cleanup";
+   initState = "init";
+   finalStates[] = {"end"};
+   class States {
+      class init {
+         name="init";
+         init= "" \n
+			"_taskArray = [];" \n
+			"_time = diag_tickTime;" \n
+			"{" \n
+			"	_period = _x select 0;" \n
+			"	_offset = _x select 1;" \n
+			"	_code = _x select 2;" \n
+			"	_init = _x select 3;" \n
+			"	_ctx = if (!isNil ""_init"") then { call _init } else { objNull };" \n
+			"	_taskArray set [ count _taskArray, [ _code, _ctx, _period,  _time - _offset ]];" \n
+//			"	diag_log(str [ _period, _time - _offset + _period, _ctx, _code ]);" \n
+			"} forEach _this;";
+         class Links {
+            class SampleLink {
+               priority=0;
+               to="loop";
+               condition="true";
+               action="";
+            };
+         };
+      };
+      class end {
+         name="end";
+         init= "";
+          class Links {};
+      };
+      class loop {
+         name="loop";
+         init="";
+         class Links {
+            class L0 {
+               priority=1;
+               to="end";
+               condition="deathHandled";
+               action= "";
+            };
+            class L1 {
+               priority=0;
+               to="loop";
+               condition="true";
+               action= "" \n
+				"_time = diag_tickTime;" \n
+				"{" \n
+				"	_code = _x select 0;" \n
+				"	_ctx = _x select 1;" \n
+				"	_period = _x select 2;" \n
+				"	_next = _x select 3;" \n
+				"	if (_time >= _next) then {" \n
+//			"	diag_log(str [ _period, _next, _ctx, _code ]);" \n
+				"		if (_period > 0) then { _next = _next + _period * (1 + floor((_time - _next) / _period)); };" \n
+				"		_x set [ 3, _next ];" \n
+				"		_ctx = _ctx call _code;" \n
+				"		if ((_period == 0) AND {(_ctx)}) exitWith {};" \n
+				"	};" \n
+				"} forEach _taskArray;";
+            };
+         };
+      };
+   };
+}; 
