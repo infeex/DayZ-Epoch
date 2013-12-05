@@ -283,6 +283,11 @@ if (isServer and isNil "sm_done") then {
 					// total each vehicle
 					serverVehicleCounter set [count serverVehicleCounter,_type];
 				};
+				diag_log format [ "HIVE vehicle %1 pos:%2 damage:%3 fuel:%4", 
+					_object call fa_veh2str, (getPosATL _object) call fa_coor2str, damage _object, fuel _object ];
+			}
+			else {
+				diag_log format [ "HIVE object %1 pos:%2 damage:%3", _object call fa_veh2str, (getPosATL _object) call fa_coor2str, damage _object ];
 			};
 
 			//Monitor the object
@@ -382,6 +387,8 @@ if (isServer and isNil "sm_done") then {
 				[_x,getPosASL _x, getDir _x] call fa_setvehevent; // eh logs getin getout
 				_x call faco_initVehEH; // eh anti tp / anti esp
 				_x call fa_antiesp_add; // anti esp registration
+				diag_log format [ "antiesp::add vehicle %1 pos:%2", 
+					_x call fa_veh2str, (getPosATL _x) call fa_coor2str ];
 			};
 		} forEach (allMissionObjects _x);
 	} forEach dayz_updateObjects;
@@ -430,7 +437,7 @@ if (isServer and isNil "sm_done") then {
 
 	if (isDedicated) then {
 		// Epoch Events
-		_id = [] spawn server_spawnEvents;
+		//_id = [] spawn server_spawnEvents; // FACO
 		// server cleanup
 		//_id = [] execFSM "\z\addons\dayz_server\system\server_cleanup.fsm"; // FACO
 

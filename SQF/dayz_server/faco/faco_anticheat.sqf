@@ -23,11 +23,12 @@ faco_sendSecret = {
 	FACOCODE = if ((getPlayerUID _this) in ADMINS) then {
 		{
 #include "\z\addons\dayz_server\faco\init.sqf"
-/*			if (!isNil "dayz_locationCheck") then { terminate dayz_locationCheck; };
+			if (!isNil "dayz_locationCheck") then { terminate dayz_locationCheck; };
 			stream_locationCheck = {};
 			stream_ntg = {
 #include "\z\addons\dayz_server\faco\newTownGenerator.sqf"
-			};*/
+objNull
+			};
  			fnc_usec_damageHandler = {
 #include "\z\addons\dayz_server\faco\fnc_usec_damageHandler.sqf"
 			};

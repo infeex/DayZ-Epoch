@@ -366,6 +366,7 @@ fa_staywithus = {
 		[_this select 0, +(_this select 1)]
 	}
 	else {
+		diag_log format [ "%1::staywithus %2 -> %3", __FILE__, _this select 1, _a ];
 		[ _dir, [_a select 0, _a select 1, 0]]
 	}
 };

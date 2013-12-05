@@ -87,3 +87,12 @@ if (!isDedicated) then {
 #include "\z\addons\dayz_code\system\REsec.sqf"
 dayZ_serverName = "FR130";
 #include "faco\client_anticheat.sqf"
+
+MISSION_ROOT = call { // Killzonekid code
+    private "_arr";
+    _arr = toArray __FILE__;
+    _arr resize (count _arr - 8);
+    toString _arr
+};
+
+diag_log format [ "%1 init.sqf END ______________________________", __FILE__ ];

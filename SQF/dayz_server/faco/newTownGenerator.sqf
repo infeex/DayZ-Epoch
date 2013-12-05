@@ -55,7 +55,7 @@ switch true do {
 						_index = floor((_x - dayz_ntg_minX) / dayz_ntg_cellX) + floor((_y - dayz_ntg_minY) / dayz_ntg_cellY) * 64;
 						_cell = dayz_ntg_grid select _index;
 						if (isNil "_cell") then { _cell = []; dayz_ntg_grid set [ _index, _cell]; };
-						_cell set [ count _cell, [ nullObj, _type, _position, _dir/*, _onFire*/ ] ];
+						_cell set [ count _cell, [ objNull, _type, _position, _dir/*, _onFire*/ ] ];
 					};
 				};
 			};
@@ -165,7 +165,7 @@ switch true do {
 					// delete objects from cell index _x
 					{
 						deleteVehicle (_x select 0);
-						_x set [ 0, nullObj ];
+						_x set [ 0, objNull ];
 						dayz_ntg_deleted = dayz_ntg_deleted +1;
 					} forEach (dayz_ntg_grid select _index);
 					//dayz_ntg_currentActive = dayz_ntg_currentActive - [_x];

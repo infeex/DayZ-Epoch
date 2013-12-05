@@ -51,12 +51,20 @@ faw_main = [] spawn {
 	#endif
 	_onedayticks = 1440 * 60 / _tick;
  
+	faw_season = 0;
+	#ifdef WEATHER_FOLLOWSEASONS
+	faw_season = -cos(360 * (1/12 + (dateToNumber date)));
+	#endif
+	#ifdef WEATHER_SOUTHEMISPHERE
+	faw_season = -faw_season;
+	#endif
+	
 	_scenar_sun = [
 	//step		time,rnd	overcast,rnd	rain,rnd	mist,rnd	wind,rnd	snow,rnd
 	/*1*/	[	10,4,		0.2,0.2,		0,0,		-1,-1,		-1,-1,		0,0 		],
 	/*2*/	[	30,15,		0.3,0.3,		0,0,		0.12,0.05,	0.2,0.1,	0,0			]
 	];
-	_bias_sun = {1};
+	_bias_sun = {1 + faw_season / 2 };
 
 	_scenar_clouds = [
 	//step		time,rnd	overcast,rnd	rain,rnd	mist,rnd	wind,rnd	snow,rnd
@@ -64,7 +72,7 @@ faw_main = [] spawn {
 	/*2*/	[	6,2,		0.87,0.07,		0,0,		0.3,0.1,	0.5,0.3,	0,0			],
 	/*3*/	[	30,15,		0.87,0.07,		0,0,		0.3,0.1,	0.5,0.3,	0,0			]
 	];
-	_bias_clouds = {(1/3 + 2 * sunOrMoon / 3)};
+	_bias_clouds = { 1 / 3 + (- faw_season / 3 + 2) * sunOrMoon / 3  };
 
 	_scenar_rain = [
 	//step		time,rnd	overcast,rnd	rain,rnd	mist,rnd	wind,rnd	snow,rnd
@@ -73,7 +81,7 @@ faw_main = [] spawn {
 	/*3*/	[	13,4,		0.9,0.05,		0.5,0.2,	0.5,0.1,	0.2,0.1,	0,0			],
 	/*4*/	[	13,4,		0.87,0.07,		0.1,0.1,	0.3,0.1,	-1,-1,		0,0			]
 	];
-	_bias_rain = {if (faw_temperature > 5) then {call _bias_clouds} else {0}};
+	_bias_rain = {if (faw_temperature > 5) then { -faw_season / 6 + call _bias_clouds } else {0}};
 
 	_scenar_storm = [
 	//step		time,rnd	overcast,rnd	rain,rnd	mist,rnd	wind,rnd	snow,rnd
@@ -119,16 +127,13 @@ faw_main = [] spawn {
 	};
 
 	// INIT
-	_groundtemperature = 0;
-	#ifdef WEATHER_FOLLOWSEASONS
-	_groundtemperature = -5 * cos(360 * (dateToNumber date));
-	#endif
-	#ifdef WEATHER_SOUTHEMISPHERE
-	_groundtemperature = -_groundtemperature;
-	#endif
-	_groundtemperature = _groundtemperature + 15;
-
-	faw_temperature = (1-cos((daytime-4)*15))*10 + _groundtemperature - 17.5 + random 15;
+	_groundtemperature = -10 * faw_season + 15;
+#ifdef WEATHER_FOLLOWSEASONS
+	faw_temperature = 4;
+#else
+	faw_temperature = 7;
+#endif	
+	faw_temperature = (1-cos((daytime-4)*15))*faw_temperature + _groundtemperature + (random (2*faw_temperature)) - faw_temperature;
 	faw_temperature = -5 max (35 min faw_temperature);
 	_moisture = 0.33 + ((faw_temperature + 5) / 40 * random 0.66);
 

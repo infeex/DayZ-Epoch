@@ -17,7 +17,7 @@ if (isNull _character) exitWith {
 };
 
 _characterID =	_character getVariable ["CharacterID","0"];
-_charPos = 		getPosATL _character;
+_charPos = 		getPosATL vehicle _character;
 _isInVehicle = 	vehicle _character != _character;
 _timeSince = 	0;
 _humanity =		0;
@@ -65,7 +65,7 @@ if (_characterID != "0") then {
 			//Zero Position
 		} else {
 			//diag_log ("getting position..."); sleep 0.05;
-			_playerPos = 	[round(direction _character),_charPos];
+			_playerPos = 	[round(direction vehicle _character),_charPos];
 			_lastPos = 		_character getVariable["lastPos",_charPos];
 			if (count _lastPos > 2 and count _charPos > 2) then {
 				if (!_isInVehicle) then {
@@ -193,7 +193,7 @@ if (_characterID != "0") then {
 			};
 		};
 
-		// If player is in a vehicle, keep its position updated
+	/*	// If player is in a vehicle, keep its position updated
 		if (vehicle _character != _character) then {
 			//[vehicle _character, "position"] call server_updateObject;
 			if (!(vehicle _character in needUpdate_objects)) then {
@@ -201,12 +201,12 @@ if (_characterID != "0") then {
 				needUpdate_objects set [count needUpdate_objects, vehicle _character];
 			};
 		};
-		
+		*/
 		// Force gear updates for nearby vehicles/tents
 		_pos = _this select 0;
 		{
 			[_x, "gear"] call server_updateObject;
-		} forEach nearestObjects [_pos, dayz_updateObjects, 10];
+		} forEach nearestObjects [_pos, dayz_updateObjects, 4];
 		//[_charPos] call server_updateNearbyObjects;
 
 		//Reset timer
