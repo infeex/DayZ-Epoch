@@ -1,6 +1,6 @@
 **Facoptere's DayZ Epoch**  
-version 1.0.3
 ================
+version 1.0.3
 
 Another flavor of "vanilla" DayZ Epoch. More secure, more FPS, less lags.
 
