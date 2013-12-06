@@ -1,8 +1,8 @@
 private ["_part_out","_part_in","_qty_out","_qty_in","_qty","_buy_o_sell","_textPartIn","_textPartOut","_bos","_needed","_started","_finished","_animState","_isMedic","_total_parts_out","_abort","_removed","_tradeCounter","_next_highest_bar","_third_highest_bar","_next_highest_conv","_third_highest_conv","_third_parts_out_raw","_third_parts_out","_remainder","_next_parts_out_raw","_next_parts_out","_activatingPlayer","_traderID","_total_trades"];
 // [part_out,part_in, qty_out, qty_in,];
 
-if(TradeInprogress) exitWith { cutText [(localize "str_epoch_player_103") , "PLAIN DOWN"] };
-TradeInprogress = true;
+if(DZE_ActionInProgress) exitWith { cutText [(localize "str_epoch_player_103") , "PLAIN DOWN"] };
+DZE_ActionInProgress = true;
 
 _total_parts_out = 0;
 
@@ -36,7 +36,7 @@ _abort = false;
 if(_total_trades < 1) exitWith { 
 	_needed =  _qty_in - _qty;
 	cutText [format[(localize "str_epoch_player_184"),_needed,_textPartIn] , "PLAIN DOWN"];
-	TradeInprogress = false;
+	DZE_ActionInProgress = false;
 };
 
 // perform number of total trades
@@ -51,6 +51,7 @@ for "_x" from 1 to _total_trades do {
 	} else {
 		cutText [format[(localize "str_epoch_player_187"),_tradeCounter,_total_trades] , "PLAIN DOWN"];
 	};
+	[1,1] call dayz_HungerThirst;
 	player playActionNow "Medic";
 	
 	//_dis=20;
@@ -95,11 +96,15 @@ for "_x" from 1 to _total_trades do {
 		_qty = {_x == _part_in} count magazines player;
 		if (_qty >= _qty_in) then {
 	
-			_removed = _removed + ([player,_part_in,_qty_in] call BIS_fnc_invRemove);
+			_part_inClass =  configFile >> "CfgMagazines" >> _part_in;
+
+			_removed = _removed + ([player,_part_inClass,_qty_in] call BIS_fnc_invRemove);
 			if (_removed == _qty_in) then {
 			
 				// Continue with trade.
-				PVDZE_obj_Trade = [_activatingPlayer,_traderID,_bos];
+				if (isNil "_part_in") then { _part_in = "Unknown Item" };
+				if (isNil "inTraderCity") then { inTraderCity = "Unknown Trader City" };
+				PVDZE_obj_Trade = [_activatingPlayer,_traderID,_bos,_part_in,inTraderCity];
 				publicVariableServer  "PVDZE_obj_Trade";
 
 				waitUntil {!isNil "dayzTradeResult"};
@@ -265,4 +270,4 @@ if(_total_parts_out >= 1) then {
 	};
 };
 
-TradeInprogress = false;
+DZE_ActionInProgress = false;

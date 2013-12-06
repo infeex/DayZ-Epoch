@@ -4,8 +4,8 @@
 */
 private ["_location","_dir","_classname","_missing","_text","_proceed","_num_removed","_object","_missingQty","_itemIn","_countIn","_qty","_removed","_removed_total","_tobe_removed_total","_objectID","_objectUID","_temp_removed_array","_textMissing","_requirements","_obj","_upgrade","_objectCharacterID"];
 
-if(TradeInprogress) exitWith { cutText [(localize "str_epoch_player_52") , "PLAIN DOWN"]; };
-TradeInprogress = true;
+if(DZE_ActionInProgress) exitWith { cutText [(localize "str_epoch_player_52") , "PLAIN DOWN"]; };
+DZE_ActionInProgress = true;
 
 player removeAction s_player_maint_build;
 s_player_maint_build = 1;
@@ -19,7 +19,7 @@ _objectID 	= _obj getVariable ["ObjectID","0"];
 // Find objectUID
 _objectUID	= _obj getVariable ["ObjectUID","0"];
 
-if(_objectID == "0" && _objectUID == "0") exitWith {TradeInprogress = false; s_player_maint_build = -1; cutText [(localize "str_epoch_player_50"), "PLAIN DOWN"];};
+if(_objectID == "0" && _objectUID == "0") exitWith {DZE_ActionInProgress = false; s_player_maint_build = -1; cutText [(localize "str_epoch_player_50"), "PLAIN DOWN"];};
 
 // Get classname
 _classname = typeOf _obj;
@@ -48,7 +48,7 @@ _proceed = true;
 } forEach _requirements;
 
 if (_proceed) then {
-
+	[1,1] call dayz_HungerThirst;
 	player playActionNow "Medic";
 	[player,20,true,(getPosATL player)] spawn player_alertZombies;
 
@@ -98,7 +98,7 @@ if (_proceed) then {
 		// Set location
 		_object setPosATL _location;
 
-		PVDZE_obj_Swap = [_objectCharacterID,_object,[_dir,_location],_classname,_obj,_objectID,_objectUID];
+		PVDZE_obj_Swap = [_objectCharacterID,_object,[_dir,_location],_classname,_obj,_objectID,_objectUID,(getPlayerUID player)];
 		publicVariableServer "PVDZE_obj_Swap";
 
 		cutText [format[(localize "str_epoch_player_144"),_text], "PLAIN DOWN", 5];
@@ -117,5 +117,5 @@ if (_proceed) then {
 };
 
 
-TradeInprogress = false;
+DZE_ActionInProgress = false;
 s_player_maint_build = -1;

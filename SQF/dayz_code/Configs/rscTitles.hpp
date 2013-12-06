@@ -57,6 +57,7 @@ class RscDisplayStart
 
 class RscDisplayDebriefing: RscStandardDisplay
 {
+	onLoad = "ctrlActivate ((_this select 0) displayCtrl 2)";
 	class controls
 	{
 		delete Debriefing_MissionTitle;
@@ -69,15 +70,24 @@ class RscDisplayDebriefing: RscStandardDisplay
 		delete CA_DebriefingStatsGroup;
 		delete ButtonStatistics;
 		delete ButtonRetry;
-		//delete ButtonContinue;
+		class ButtonContinue: RscIGUIShortcutButton
+		{
+			idc = 2;
+			shortcuts[] = {"0x00050000 + 0",28,57,156};
+			x = 0.4080875;
+			y = 0.863977;
+			text = $STR_UI_CONTINUE;
+		};
 	};
 	class ControlsBackground
 	{
 		delete Mainback;
 	};
 };
+
 class RscDisplayMissionFail: RscStandardDisplay
 {
+	onLoad = "ctrlActivate ((_this select 0) displayCtrl 2)";
 	class controls
 	{
 		delete Debriefing_MissionTitle;
@@ -89,7 +99,14 @@ class RscDisplayMissionFail: RscStandardDisplay
 		delete CA_DebriefingObjectivesGroup;
 		delete CA_DebriefingStatsGroup;
 		delete BRetry;
-		//delete BAbort;
+		class BAbort: RscIGUIShortcutButton
+		{
+			idc = 2;
+			shortcuts[] = {"0x00050000 + 0",28,57,156};
+			x = 0.4080875;
+			y = 0.863977;
+			text = $STR_UI_END;
+		};
 	};
 	class ControlsBackground
 	{
@@ -149,7 +166,7 @@ class RscDisplayMain : RscStandardDisplay
 		class DAYZ_Version : CA_Version
 		{
 			idc = -1;
-			text = "DayZ Epoch 1.0.2.8";
+			text = "DayZ Epoch 1.0.3";
 			y = "(SafeZoneH + SafeZoneY) - (1 - 0.95)";
 		};
 		delete CA_TitleMainMenu;
@@ -195,7 +212,7 @@ class RscDisplayMain : RscStandardDisplay
 		};
 	};
 };
-
+/*
 class RscDisplayMainMap {
 	saveParams = 1;
 	
@@ -509,7 +526,7 @@ class RscDisplayMainMap {
 		};
 	};
 };
-
+*/
 class RscDisplayClientGetReady : RscDisplayGetReady {
 	onload = "private ['_dummy']; _dummy = [_this,'onload'] call compile preprocessfile '\ca\ui\scripts\server_interface.sqf'; _this spawn { while { !isNull (findDisplay 53) } do { ctrlActivate ((_this select 0) displayCtrl 1); sleep 0.1; }; };";
 	color0[] = {0.4, 0.4, 0.4, 1};
@@ -744,7 +761,7 @@ class RscDisplayGenderSelect
 		class Gender_Title: RscStructuredText
 		{
 			idc = -1;
-			text = "$STR_UI_GENDER_TITLE";
+			text = $STR_UI_GENDER_TITLE;
 			x = 0.4 * safezoneW + safezoneX;
 			y = 0.221864 * safezoneH + safezoneY;
 			w = 0.2 * safezoneW;
@@ -754,7 +771,7 @@ class RscDisplayGenderSelect
 		class Gender_Description: RscStructuredText
 		{
 			idc = -1;
-			text = "$STR_UI_GENDER_DESC";
+			text = $STR_UI_GENDER_DESC;
 			x = 0.4 * safezoneW + safezoneX;
 			y = 0.366134 * safezoneH + safezoneY;
 			w = 0.2 * safezoneW;
@@ -832,7 +849,7 @@ class RscDisplayMPInterrupt : RscStandardDisplay {
 		class CA_B_REVERT : CA_B_SAVE {
 			idc = 119;
 			y = 0.2537 + 0.101903 * 1;
-			text = "$str_disp_revert";
+			text = $str_disp_revert;
 			default = 0;
 		};
 		
@@ -876,7 +893,7 @@ class RscDisplayGear
 	idd = 106;
 	enableDisplay = 1;
 	// 177 based
-	//onLoad = "_this call fn_gearMenuChecks;[] spawn object_monitorGear; {player removeMagazines _x} forEach MeleeMagazines; call gear_ui_init; if (isNil('IGUI_GEAR_activeFilter')) then { IGUI_GEAR_activeFilter = 0;}; private ['_dummy']; _dummy = [_this,'initDialog'] call compile preprocessFile	'\ca\ui\scripts\handleGear.sqf'; _dummy = [_this,'onLoad'] execVM	'\ca\ui\scripts\handleGear.sqf'; _dummy;";
+	//onLoad = "_this call fn_gearMenuChecks;[] spawn object_monitorGear; {player removeMagazines _x} forEach MeleeMagazines; call gear_ui_init; if (isNil('IGUI_GEAR_activeFilter')) then { IGUI_GEAR_activeFilter = 0;}; private ['_dummy']; _dummy = [_this,'initDialog'] call compile preprocessFile	'\z\addons\dayz_code\BIS_scripts\handleGear.sqf'; _dummy = [_this,'onLoad'] execVM	'\z\addons\dayz_code\BIS_scripts\handleGear.sqf'; _dummy;";
 	onUnload = "call player_gearSync; call dayz_forceSave;";
 	
 	class controls
@@ -964,7 +981,7 @@ class RscDisplayGear
 			idc = 1001;
 			x = 0.047634;
 			y = -0.00102941;
-			text = "Gear";
+			text = $STR_EPOCH_PLAYER_278;
 		};
 
 		class Unit_Title : RscText {
@@ -1036,8 +1053,8 @@ class RscDisplayGear
 					idc = 146;
 					x = -2;
 					style = 2048;
-					onSetFocus = "private [""_dummy""]; _dummy = [_this,""onFocus""] execVM	""\ca\ui\scripts\handleGear.sqf""; _dummy;";
-					onButtonClick = "private [""_dummy""]; _dummy = [_this,""onLBListSelChanged""] execVM ""\ca\ui\scripts\handleGear.sqf""; _dummy;";
+					onSetFocus = "private [""_dummy""]; _dummy = [_this,""onFocus""] execVM	""\z\addons\dayz_code\BIS_scripts\handleGear.sqf""; _dummy;";
+					onButtonClick = "private [""_dummy""]; _dummy = [_this,""onLBListSelChanged""] execVM ""\z\addons\dayz_code\BIS_scripts\handleGear.sqf""; _dummy;";
 					text = "&lt;";
 				};
 				class Available_items: RscIGUIListNBox
@@ -1048,10 +1065,10 @@ class RscDisplayGear
 					idcRight = 147;
 					idcLeft = 146;
 					colorPlayerItem[] = {0.8784,0.8471,0.651,1};
-					onKeyDown = "private [""_dummy""]; _dummy = [_this,""onKeyDown"",0,107,0,107] execVM	""\ca\ui\scripts\handleGear.sqf""; _dummy;";
-					onLBSelChanged = "private [""_dummy""]; _dummy = [_this,""onLBSelChanged""] execVM ""\ca\ui\scripts\handleGear.sqf""; _dummy;";
-					onLBListSelChanged = "private [""_dummy""]; _dummy = [_this,""onLBListSelChanged""] execVM ""\ca\ui\scripts\handleGear.sqf""; _dummy;";
-					onKillFocus = "private [""_dummy""]; _dummy = [_this,""onKillFocus""] execVM	""\ca\ui\scripts\handleGear.sqf""; _dummy;";
+					onKeyDown = "private [""_dummy""]; _dummy = [_this,""onKeyDown"",0,107,0,107] execVM	""\z\addons\dayz_code\BIS_scripts\handleGear.sqf""; _dummy;";
+					onLBSelChanged = "private [""_dummy""]; _dummy = [_this,""onLBSelChanged""] execVM ""\z\addons\dayz_code\BIS_scripts\handleGear.sqf""; _dummy;";
+					onLBListSelChanged = "private [""_dummy""]; _dummy = [_this,""onLBListSelChanged""] execVM ""\z\addons\dayz_code\BIS_scripts\handleGear.sqf""; _dummy;";
+					onKillFocus = "private [""_dummy""]; _dummy = [_this,""onKillFocus""] execVM	""\z\addons\dayz_code\BIS_scripts\handleGear.sqf""; _dummy;";
 					x = 0;
 					y = 0;
 					w = 0.46;
@@ -1062,8 +1079,8 @@ class RscDisplayGear
 				{
 					idc = 147;
 					x = -2;
-					onSetFocus = "private [""_dummy""]; _dummy = [_this,""onFocus""] execVM ""\ca\ui\scripts\handleGear.sqf""; _dummy;";
-					onButtonClick = "private [""_dummy""]; _dummy = [_this,""onLBListSelChanged""] execVM ""\ca\ui\scripts\handleGear.sqf""; _dummy;";
+					onSetFocus = "private [""_dummy""]; _dummy = [_this,""onFocus""] execVM ""\z\addons\dayz_code\BIS_scripts\handleGear.sqf""; _dummy;";
+					onButtonClick = "private [""_dummy""]; _dummy = [_this,""onLBListSelChanged""] execVM ""\z\addons\dayz_code\BIS_scripts\handleGear.sqf""; _dummy;";
 					text = ">";
 				};
 			};
@@ -1518,7 +1535,7 @@ class RscDisplayGear
 			shortcuts[] = {"0x00050000 + 3"};
 			x = 0.333336;
 			y = 0.897067;
-			text = "Filter";
+			text = $STR_EPOCH_PLAYER_279;
 		};
 		class ButtonRearm: RscIGUIShortcutButton
 		{
@@ -1526,7 +1543,7 @@ class RscDisplayGear
 			shortcuts[] = {"0x00050000 + 2"};
 			x = 0.554743;
 			y = 0.897067;
-			text = "Rearm";
+			text = $STR_EPOCH_PLAYER_280;
 		};
 		class ButtonOpenBag: RscIGUIShortcutButton
 		{
@@ -1534,7 +1551,7 @@ class RscDisplayGear
 			shortcuts[] = {"0x00050000 + 2"};
 			x = 0.554743;
 			y = 0.897067;
-			text = "Open bag";
+			text = $STR_EPOCH_PLAYER_281;
 		};
 		class ButtonCloseBag: RscIGUIShortcutButton
 		{
@@ -1542,7 +1559,7 @@ class RscDisplayGear
 			shortcuts[] = {"0x00050000 + 2"};
 			x = 0.554743;
 			y = 0.897067;
-			text = "Close bag";
+			text = $STR_EPOCH_PLAYER_282;
 		};
 		class ButtonContinue: RscIGUIShortcutButton
 		{
@@ -1558,38 +1575,38 @@ class RscDisplayGear
 			shortcuts[] = {"0x00050000 + 1"};
 			x = 0.0392216;
 			y = 0.897066;
-			text = "Close";
+			text = $STR_EPOCH_PLAYER_283;
 		};
 	};
 	class Filters
 	{
 		class All
 		{
-			name = "All";
+			name = $STR_EPOCH_PLAYER_284;
 			mask = -1;
 			image = "\ca\ui\data\igui_gear_filter_1_ca.paa";
 		};
 		class Primary
 		{
-			name = "Primary";
+			name = $STR_EPOCH_PLAYER_285;
 			mask = 769;
 			image = "\ca\ui\data\igui_gear_filter_2_ca.paa";
 		};
 		class Secondary
 		{
-			name = "Secondary";
+			name = $STR_EPOCH_PLAYER_286;
 			mask = 516;
 			image = "\ca\ui\data\igui_gear_filter_3_ca.paa";
 		};
 		class HandGun
 		{
-			name = "HandGun";
+			name = $STR_EPOCH_PLAYER_287;
 			mask = 18;
 			image = "\ca\ui\data\igui_gear_filter_4_ca.paa";
 		};
 		class Items
 		{
-			name = "Items";
+			name = $STR_EPOCH_PLAYER_288;
 			mask = 135168;
 			image = "\ca\ui\data\igui_gear_filter_5_ca.paa";
 		};
@@ -1602,7 +1619,7 @@ class RscDisplayGear
 	emptyMag2 = "\ca\ui\data\ui_gear_mag2_gs.paa";
 	emptyHGun = "\ca\ui\data\ui_gear_hgun_gs.paa";
 	emptyHGunMag = "\ca\ui\data\ui_gear_hgunmag_gs.paa";
-	onLoad = "_this call fn_gearMenuChecks;[] spawn object_monitorGear; call gear_ui_init; call ui_gear_sound;if (isNil('IGUI_GEAR_activeFilter')) then { IGUI_GEAR_activeFilter = 0;}; private ['_dummy']; _dummy = [_this,'initDialog'] call compile preprocessFile	'\ca\ui\scripts\handleGear.sqf'; _dummy = [_this,'onLoad'] execVM	'\ca\ui\scripts\handleGear.sqf'; _dummy;";
+	onLoad = "_this call fn_gearMenuChecks;[] spawn object_monitorGear; call gear_ui_init; call ui_gear_sound;if (isNil('IGUI_GEAR_activeFilter')) then { IGUI_GEAR_activeFilter = 0;}; private ['_dummy']; _dummy = [_this,'initDialog'] call compile preprocessFile	'\z\addons\dayz_code\BIS_scripts\handleGear.sqf'; _dummy = [_this,'onLoad'] execVM	'\z\addons\dayz_code\BIS_scripts\handleGear.sqf'; _dummy;";
 	class ControlsBackground
 	{
 		class Mainback: RscPicture
@@ -1631,291 +1648,14 @@ class DZ_ItemInteraction {
 
 	};
 };
+#ifdef NewPlayerUI
+#include "RscDisplay\RscNewPlayerUI.hpp"
+#else
+#include "RscDisplay\RscOldPlayerUI.hpp"
+#endif
 
-class RscTitles
-{
-	titles[] = {"DeathScreen","TitleScreen","RscTitleStructuredText"};
-	class DeathScreen
-	{
-		idd = -1;
-		movingEnable = "false";
-		duration = 120;
-		fadein = 0;
-		name = "DeathScreen";
-		controls[] = {"DeathScreen"};
-		class DeathScreen: RscPicture
-		{
-			x = "0.00001 * safezoneW + safezoneX";
-			y = "0.00001 * safezoneH + safezoneY";
-			w = "1 * safezoneW";
-			h = "1 * safezoneH";
-			text = "\z\addons\dayz_epoch\ui\screen_death_ca.paa";
-		};
-	};
-	class TitleScreen
-	{
-		idd = -1;
-		movingEnable = "false";
-		duration = 120;
-		fadein = 0;
-		name = "TitleScreen";
-		controls[] = {"TitleScreen"};
-		class TitleScreen: RscPicture
-		{
-			x = "0.00001 * safezoneW + safezoneX";
-			y = "0.00001 * safezoneH + safezoneY";
-			w = "1 * safezoneW";
-			h = "1 * safezoneH";
-			text = "\dayz\ui\screen_title_ca.paa";
-		};
-	};
-	class Default
-	{
-		idd = -1;
-		movingEnable = 0;
-		duration = 4;
-	};
-	class playerKillScore 
-	{
-		idd = 6902;
-		movingEnable = 0;
-		duration = 5;
-		name = "playerKillScore";
-		onLoad = "uiNamespace setVariable ['DAYZ_GUI_kills', _this select 0];";
-		class ControlsBackground {
-			class RscPicture_1201: RscPictureGUI
-			{
-				idc = 1400;
-				text = "\z\addons\dayz_code\gui\stats_kills_human_ca.paa";
-				x = 0.044687 * safezoneW + safezoneX;
-				y = 0.934779 * safezoneH + safezoneY;
-				w = 0.06;
-				h = 0.08;
-			};
-			class RscPicture_1200: RscPictureGUI
-			{
-				idc = 1401;
-				text = "\z\addons\dayz_code\gui\stats_kills_zombie_ca.paa";
-				x = 0.044687 * safezoneW + safezoneX;
-				y = 0.876025 * safezoneH + safezoneY;
-				w = 0.06;
-				h = 0.08;
-			};
-		};
-		class Controls{
-			class RscText1: RscStructuredTextGUI
-			{
-				idc = 1410;
-				text = "10";
-				x = (0.044687 * safezoneW + safezoneX) - 0.01;
-				y = 0.934779 * safezoneH + safezoneY;
-				w = 0.08;
-				h = 0.08;
-			};
-			class RscText2: RscStructuredTextGUI
-			{
-				idc = 1411;
-				text = "1000";
-				x = (0.044687 * safezoneW + safezoneX) - 0.01;
-				y = 0.876025 * safezoneH + safezoneY;
-				w = 0.08;
-				h = 0.08;
-			};
-		};
-	};
-	
-	class playerStatusWaiting
-	{
-		idd = 6901;
-		movingEnable = 0;
-		duration = 100000;
-		name = "playerStatusWaiting";
-		onLoad = "uiNamespace setVariable ['DAYZ_GUI_waiting', _this select 0];";
-		class ControlsBackground {
-			class RscText_1402: RscPictureGUI
-			{
-				idc = 1402;
-				text = "#(argb,8,8,3)color(1,1,1,1)";
-				x = 0.473572 * safezoneW + safezoneX;
-				y = 0.418158 * safezoneH + safezoneY;
-				w = 0.0634286 * safezoneW;
-				h = 0.136829 * safezoneH;
-				colorText[] = {1,1,1,1};
-			};
-			class RscText_1400: RscPictureGUI
-			{
-				idc = 1400;
-				text = "#(argb,8,8,3)color(1,1,1,1)";
-				x = 0.473572 * safezoneW + safezoneX;
-				y = 0.418158 * safezoneH + safezoneY;
-				w = 0.0634286 * safezoneW;
-				h = 0; //0.136829 * safezoneH;
-				colorText[] = {0,0,0,1};
-			};
-		};
-		class Controls {
-			class RscPicture_1401: RscPictureGUI
-			{
-				idc = 1401;
-				text = "\z\addons\dayz_code\gui\status_waiting_ca.paa";
-				x = 0.434999 * safezoneW + safezoneX;
-				y = 0.392207 * safezoneH + safezoneY;
-				w = 0.141 * safezoneW;
-				h = 0.188013 * safezoneH;
-				colorText[] = {0.38,0.63,0.26,1};
-			};
-		};
-	};
+#ifdef SpawnSelecter
+#include "RscDisplay\RscDisplaySpawnSelecter.hpp"
+#endif
 
-	class playerStatusGUI
-	{
-		idd = 6900;
-		movingEnable = 0;
-		duration = 100000;
-		name = "statusBorder";
-		onLoad = "uiNamespace setVariable ['DAYZ_GUI_display', _this select 0];";
-		class ControlsBackground {
-			class RscStructuredText_1199: RscStructuredText
-			{
-				idc = 1199;
-				x = 0.250001;
-				y = 0.350001;
-				w = 0.5;
-				h = 0.1;
-			};
-			
-			class RscPicture_1203: RscPictureGUI
-			{
-				idc = 1203;
-				text = "\z\addons\dayz_code\gui\status_fracture_ca.paa";
-				x = 0.955313 * safezoneW + safezoneX;
-				y = 0.58 * safezoneH + safezoneY;
-				w = 0.06;
-				h = 0.08;
-				colorText[] = {1,1,1,1};
-			};
-			class RscPicture_1204: RscPictureGUI
-			{
-				idc = 1204;
-				text = "\z\addons\dayz_code\gui\status_connection_ca.paa";
-				x = 0.955313 * safezoneW + safezoneX;
-				y = 0.51 * safezoneH + safezoneY;
-				w = 0.06;
-				h = 0.08;
-				colorText[] = {1,1,1,1};
-			};
-			class RscPicture_1205: RscPictureGUI
-			{
-				idc = 1205;
-				text = "\z\addons\dayz_code\gui\status_ear_ca.paa";
-				x = 0.955313 * safezoneW + safezoneX;
-				y = 0.30 * safezoneH + safezoneY;
-				w = 0.06;
-				h = 0.08;
-			};
-			class RscPicture_1206: RscPictureGUI
-			{
-				idc = 1206;
-				text = "\z\addons\dayz_code\gui\status_eye_ca.paa";
-				x = 0.955313 * safezoneW + safezoneX;
-				y = 0.37 * safezoneH + safezoneY;
-				w = 0.06;
-				h = 0.08;
-			};
-			
-		};
-		class Controls{
-			class RscPicture_1301: RscPictureGUI
-			{
-				idc = 1301;
-				//text = "\z\addons\dayz_code\gui\status_food_inside_ca.paa";
-				x = 0.955313 * safezoneW + safezoneX;
-				y = 0.93 * safezoneH + safezoneY;
-				w = 0.06;
-				h = 0.08;
-			};
-			class RscPicture_1300: RscPictureGUI
-			{
-				idc = 1300;
-				//text = "\z\addons\dayz_code\gui\status_blood_inside_ca.paa";
-				x = 0.955313 * safezoneW + safezoneX;
-				y = 0.86 * safezoneH + safezoneY;
-				w = 0.06;
-				h = 0.08;
-			};
-			class RscPicture_1302: RscPictureGUI
-			{
-				idc = 1302;
-				//text = "\z\addons\dayz_code\gui\status_thirst_inside_ca.paa";
-				x = 0.955313 * safezoneW + safezoneX;
-				y = 0.79 * safezoneH + safezoneY;
-				w = 0.06;
-				h = 0.08;
-			};
-			class RscPicture_1306: RscPictureGUI
-			{
-				idc = 1306;
-				//text = "\z\addons\dayz_code\gui\status_temp_ca.paa";
-				x = 0.955313 * safezoneW + safezoneX;
-				y = 0.72 * safezoneH + safezoneY;
-				w = 0.06;
-				h = 0.08;
-			};
-			class RscPicture_1303: RscPictureGUI
-			{
-				idc = 1303;
-				text = "\z\addons\dayz_code\gui\status_bleeding_ca.paa";
-				x = 0.955313 * safezoneW + safezoneX;
-				y = 0.86 * safezoneH + safezoneY;
-				w = 0.06;
-				h = 0.08;
-				colorText[] = {1,1,1,0.5};
-			};
-			class RscPicture_1304: RscPictureGUI
-			{
-				idc = 1304;
-				text = "";
-				x = 0.935313 * safezoneW + safezoneX;
-				y = 0.3 * safezoneH + safezoneY;
-				w = 0.06;
-				h = 0.08;
-			};
-			class RscPicture_1305: RscPictureGUI
-			{
-				idc = 1305;
-				text = "";
-				x = 0.935313 * safezoneW + safezoneX;
-				y = 0.37 * safezoneH + safezoneY;
-				w = 0.06;
-				h = 0.08;
-			};
-			class RscPicture_1307 : RscPictureGUI {
-				idc = 1307;
-				text = "\z\addons\dayz_code\gui\status_combat_inside_ca.paa";
-				x = "0.955313 * safezoneW + safezoneX";
-				y = "0.65 * safezoneH + safezoneY";
-				w = 0.06;
-				h = 0.08;
-			};
-			class RscPicture_1701: RscPictureGUI
-
-			{
-				idc = 1701;
-				//text = "\z\addons\dayz_code\gui\status_food_inside_ca.paa";
-				x = 0.945313 * safezoneW + safezoneX;
-				y = 0.95 * safezoneH + safezoneY;
-				w = 0.04;
-				h = 0.053333;
-			};
-			class RscPicture_1702: RscPictureGUI
-			{
-				idc = 1702;
-				//text = "\z\addons\dayz_code\gui\status_thirst_inside_ca.paa";
-				x = 0.945313 * safezoneW + safezoneX;
-				y = 0.816666 * safezoneH + safezoneY;
-				w = 0.04;
-				h = 0.053333;
-			};
-		};
-	};
-};
+#include "RscDisplay\RscMap.hpp"

@@ -1,19 +1,19 @@
 private ["_dir","_classname","_box","_location","_item","_config","_create_raw","_create","_qty","_type","_hasCrate","_hasTool"];
 
-if(TradeInprogress) exitWith { cutText [(localize "str_epoch_player_75") , "PLAIN DOWN"]; };
-TradeInprogress = true;
+if(DZE_ActionInProgress) exitWith { cutText [(localize "str_epoch_player_75") , "PLAIN DOWN"]; };
+DZE_ActionInProgress = true;
 
 _hasTool = 	"ItemCrowbar" in items player;
 if(!_hasTool) exitWith { 
 	cutText [(localize "str_epoch_player_76"), "PLAIN DOWN"];
-	TradeInprogress = false;
+	DZE_ActionInProgress = false;
 };
 
 _item =     _this;
 _hasCrate = 	_item in magazines player;
 if (!_hasCrate) exitWith {
 	cutText [(localize "str_epoch_player_77"), "PLAIN DOWN"];
-	TradeInprogress = false;
+	DZE_ActionInProgress = false;
 };
 
 _config =   configFile >> "CfgMagazines" >> _item;
@@ -33,8 +33,9 @@ _dir = getDir player;
 _classname = "WeaponHolder";
 
 //return empty crate to inventory
-player addMagazine "bulk_emtpy";
+player addMagazine "bulk_empty";
 
+[1,1] call dayz_HungerThirst;
 // Change to optional wait to complete
 player playActionNow "Medic";
 sleep 6;
@@ -59,4 +60,4 @@ player action ["Gear", _box];
 		
 cutText [(localize "str_epoch_player_78"), "PLAIN DOWN"];
 	
-TradeInprogress = false;
+DZE_ActionInProgress = false;

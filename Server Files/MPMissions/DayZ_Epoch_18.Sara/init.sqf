@@ -16,6 +16,8 @@ dayz_previousID = 0;
 player setVariable ["BIS_noCoreConversations", true];
 //disable radio messages to be heard and shown in the left lower corner of the screen
 enableRadio false;
+// May prevent "how are you civillian?" messages from NPC
+enableSentences false;
 
 // DayZ Epoch config
 spawnShoremode = 1; // Default = 1 (on shore)
@@ -55,10 +57,11 @@ progressLoadingScreen 1.0;
 "filmic" setToneMappingParams [0.153, 0.357, 0.231, 0.1573, 0.011, 3.750, 6, 4]; setToneMapping "Filmic";
 
 if (isServer) then {
-	call compile preprocessFileLineNumbers "dynamic_vehicle.sqf";				//Compile vehicle configs
+	call compile preprocessFileLineNumbers "\z\addons\dayz_server\missions\DayZ_Epoch_18.Sara\dynamic_vehicle.sqf";
+	//Compile vehicle configs
 	
 	// Add trader citys
-	_nil = [] execVM "mission.sqf";
+	_nil = [] execVM "\z\addons\dayz_server\missions\DayZ_Epoch_18.Sara\mission.sqf";
 	_serverMonitor = 	[] execVM "\z\addons\dayz_code\system\server_monitor.sqf";
 };
 
@@ -71,7 +74,7 @@ if (!isDedicated) then {
 	//Run the player monitor
 	_id = player addEventHandler ["Respawn", {_id = [] spawn player_death;}];
 	_playerMonitor = 	[] execVM "\z\addons\dayz_code\system\player_monitor.sqf";	
-	_void = [] execVM "R3F_Realism\R3F_Realism_Init.sqf";
+	
 	
 	//Lights
 	//[0,0,true,true,true,58,280,600,[0.698, 0.556, 0.419],"Generator_DZ",0.1] execVM "\z\addons\dayz_code\compile\local_lights_init.sqf";
@@ -79,3 +82,4 @@ if (!isDedicated) then {
 #include "\z\addons\dayz_code\system\REsec.sqf"
 //Start Dynamic Weather
 execVM "\z\addons\dayz_code\external\DynamicWeatherEffects.sqf";
+#include "\z\addons\dayz_code\system\BIS_Effects\init.sqf"

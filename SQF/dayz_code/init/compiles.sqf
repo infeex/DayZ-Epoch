@@ -6,11 +6,11 @@ if (!isDedicated) then {
 
 	"filmic" setToneMappingParams [0.07, 0.31, 0.23, 0.37, 0.011, 3.750, 6, 4]; setToneMapping "Filmic";
 
-	BIS_Effects_Burn = 			compile preprocessFile "\ca\Data\ParticleEffects\SCRIPTS\destruction\burn.sqf"; 
+	BIS_Effects_Burn = 				compile preprocessFile "\ca\Data\ParticleEffects\SCRIPTS\destruction\burn.sqf"; 
 	player_zombieCheck = 			compile preprocessFileLineNumbers "\z\addons\dayz_code\compile\player_zombieCheck.sqf";	//Run on a players computer, checks if the player is near a zombie
 	player_zombieAttack = 			compile preprocessFileLineNumbers "\z\addons\dayz_code\compile\player_zombieAttack.sqf";	//Run on a players computer, causes a nearby zombie to attack them
 	fnc_usec_damageActions =		compile preprocessFileLineNumbers "\z\addons\dayz_code\compile\fn_damageActions.sqf";		//Checks which actions for nearby casualty
-	fnc_inAngleSector =			compile preprocessFileLineNumbers "\z\addons\dayz_code\compile\fn_inAngleSector.sqf";		//Checks which actions for nearby casualty
+	fnc_inAngleSector =				compile preprocessFileLineNumbers "\z\addons\dayz_code\compile\fn_inAngleSector.sqf";		//Checks which actions for nearby casualty
 	fnc_usec_selfActions =			compile preprocessFileLineNumbers "\z\addons\dayz_code\compile\fn_selfActions.sqf";		//Checks which actions for self
 	fnc_usec_unconscious =			compile preprocessFileLineNumbers "\z\addons\dayz_code\compile\fn_unconscious.sqf";
 	player_temp_calculation	=		compile preprocessFileLineNumbers "\z\addons\dayz_code\compile\fn_temperatur.sqf";		//Temperatur System	//TeeChange
@@ -64,6 +64,8 @@ if (!isDedicated) then {
 	object_roadFlare = 			compile preprocessFileLineNumbers "\z\addons\dayz_code\compile\object_roadFlare.sqf";
 	object_setpitchbank	=		compile preprocessFileLineNumbers "\z\addons\dayz_code\compile\fn_setpitchbank.sqf";
 	object_monitorGear =			compile preprocessFileLineNumbers "\z\addons\dayz_code\compile\object_monitorGear.sqf";
+
+	local_roadDebris =			compile preprocessFileLineNumbers "\z\addons\dayz_code\compile\local_roadDebris.sqf";
 	
 	//Zombies
 	zombie_findTargetAgent = 		compile preprocessFileLineNumbers "\z\addons\dayz_code\compile\zombie_findTargetAgent.sqf";
@@ -99,13 +101,16 @@ if (!isDedicated) then {
 	player_goFishing =			compile preprocessFileLineNumbers "\z\addons\dayz_code\actions\player_goFishing.sqf";
 	player_build =				compile preprocessFileLineNumbers "\z\addons\dayz_code\actions\player_build.sqf";
 	player_wearClothes =			compile preprocessFileLineNumbers "\z\addons\dayz_code\actions\player_wearClothes.sqf";
-	player_dropWeapon =			compile preprocessFileLineNumbers "\z\addons\dayz_code\actions\player_dropWeapon.sqf";
-	playerpip_setTrap =			compile preprocessFileLineNumbers "\z\addons\dayz_code\actions\player_setTrap.sqf";
+	//player_dropWeapon =			compile preprocessFileLineNumbers "\z\addons\dayz_code\actions\player_dropWeapon.sqf";
+	//playerpip_setTrap =			compile preprocessFileLineNumbers "\z\addons\dayz_code\actions\player_setTrap.sqf";
 	object_pickup = 			compile preprocessFileLineNumbers "\z\addons\dayz_code\actions\object_pickup.sqf";
 	player_flipvehicle = 			compile preprocessFileLineNumbers "\z\addons\dayz_code\actions\player_flipvehicle.sqf";
 	player_sleep = 				compile preprocessFileLineNumbers "\z\addons\dayz_code\actions\player_sleep.sqf";
 	//player_mineOre =			compile preprocessFileLineNumbers "\z\addons\dayz_code\actions\player_mineOre.sqf";
 	player_antiWall =			compile preprocessFileLineNumbers "\z\addons\dayz_code\compile\player_antiWall.sqf";
+	player_deathBoard =			compile preprocessFileLineNumbers "\z\addons\dayz_code\actions\list_playerDeathsAlt.sqf";
+	
+	player_upgradeVehicle =			compile preprocessFileLineNumbers "\z\addons\dayz_code\compile\player_upgradeVehicle.sqf";
 	
 	//ui
 	player_selectSlot =			compile preprocessFileLineNumbers "\z\addons\dayz_code\compile\ui_selectSlot.sqf";
@@ -121,46 +126,8 @@ if (!isDedicated) then {
 	onPreloadStarted 			"dayz_preloadFinished = false;";
 	onPreloadFinished 			"dayz_preloadFinished = true;";
 	
-	// TODO: need move it in player_monitor.fsm
-	// allow player disconnect from server, if loading hang, kicked by BE etc.
-	[] spawn {
-		private["_timeOut","_display","_control1","_control2"];
-		disableSerialization;
-		_timeOut = 0;
-		dayz_loadScreenMsg = "";
-		diag_log "DEBUG: loadscreen guard started.";
-		_display = uiNameSpace getVariable "BIS_loadingScreen";
-		_control1 = _display displayctrl 8400;
-		_control2 = _display displayctrl 102;
-		// 120 sec timeout
-		while { _timeOut < 3000 && !dayz_clientPreload && !dayz_authed } do {
 
-			if ( isNull _display ) then {
-				waitUntil { !dialog; };
-				startLoadingScreen ["","RscDisplayLoadCustom"];
-				_display = uiNameSpace getVariable "BIS_loadingScreen";
-				_control1 = _display displayctrl 8400;
-				_control2 = _display displayctrl 102;
-			};
-
-			if ( dayz_loadScreenMsg != "" ) then {
-				_control1 ctrlSetText dayz_loadScreenMsg;
-				dayz_loadScreenMsg = "";
-			};
-			_control2 ctrlSetText format["%1",round(_timeOut*0.01)];
-			_timeOut = _timeOut + 1;
-			sleep 0.01;
-		};
-		endLoadingScreen;
-		/*
-		if ( !dayz_clientPreload && !dayz_authed ) then {
-			diag_log "DEBUG: loadscreen guard ended with timeout.";
-			disableUserInput false;
-			1 cutText ["Disconnected!", "PLAIN"];
-			player enableSimulation false;
-		} else { diag_log "DEBUG: loadscreen guard ended."; };
-		*/
-	}; 
+	 
 
 	//
 	RunTime = 0;
@@ -269,15 +236,10 @@ if (!isDedicated) then {
 		_counter
 	};
 
-	player_setDate = {
-		private ["_setdatebool"];
-		_setdatebool = false;
-		if (!([_this, date] call BIS_fnc_areEqual)) exitWith {
-			_setdatebool = true;
-		};
-		if (_setdatebool) then {
-			setDate _this;
-		};
+	player_tagFriendlyMsg = {
+		if(player == _this) then { 
+			cutText[(localize "str_epoch_player_2"),"PLAIN DOWN"];
+		}; 
 	};
 
 	player_serverModelChange = {
@@ -363,288 +325,125 @@ if (!isDedicated) then {
 		_objName = toLower(toString(_objName));
 		_objName
 	};
+
+	dze_isnearest_player = {
+		private ["_notClosest","_playerDistance","_nearPlayers","_obj","_playerNear"];
+		if(!isNull _this) then {
+			_nearPlayers = _this nearEntities ["CAManBase", 12];
+			_playerNear = ({isPlayer _x} count _nearPlayers) > 1;
+			_notClosest = false;
+			if (_playerNear) then {
+				// check if another player is closer
+				_playerDistance = player distance _this;
+				{
+					if (_playerDistance > (_x distance _this)) exitWith { _notClosest = true; };
+				} forEach _nearPlayers;
+			};
+		} else {
+			_notClosest = false;
+		};
+		_notClosest
+	};
+		
+	// trader menu code
+	call compile preprocessFileLineNumbers "\z\addons\dayz_code\compile\player_traderMenu.sqf";
 	
+	// recent murders menu code
+	call compile preprocessFileLineNumbers "\z\addons\dayz_code\compile\player_murderMenu.sqf";
+
+	//This is still needed but the fsm should terminate if any errors pop up.
+	[] spawn {
+        private["_timeOut","_display","_control1","_control2"];
+        disableSerialization;
+        _timeOut = 0;
+        dayz_loadScreenMsg = "";
+        diag_log "DEBUG: loadscreen guard started.";
+        _display = uiNameSpace getVariable "BIS_loadingScreen";
+        if (!isNil "_display") then {
+                _control1 = _display displayctrl 8400;
+                _control2 = _display displayctrl 102;
+        };
+                
+        waitUntil {!dayz_DisplayGenderSelect};
+                
+        // 120 sec timeout (12000 * 0.01)
+        while { _timeOut < 12000 } do {
+            if (dayz_clientPreload && dayz_authed) exitWith { diag_log "PLOGIN: Login loop completed!"; };
+            if (!isNil "_display") then {
+                if ( isNull _display ) then {                        
+                        waitUntil { !dialog; };                                
+                        startLoadingScreen ["","RscDisplayLoadCustom"];
+                        _display = uiNameSpace getVariable "BIS_loadingScreen";
+                        _control1 = _display displayctrl 8400;
+                        _control2 = _display displayctrl 102;
+                };
+
+                if ( dayz_loadScreenMsg != "" ) then {
+                        _control1 ctrlSetText dayz_loadScreenMsg;
+                        dayz_loadScreenMsg = "";
+                };
+
+                _control2 ctrlSetText format["%1",round(_timeOut*0.01)];
+            };
+
+            _timeOut = _timeOut + 1;
+
+            if (_timeOut >= 12000) then {
+                1 cutText [localize "str_player_login_timeout", "PLAIN DOWN"];
+                sleep 10;
+                endLoadingScreen;
+                endMission "END1";
+            };
+
+            sleep 0.01;
+        };
+	};
+
+	// TODO: need move it in player_monitor.fsm
+	// allow player disconnect from server, if loading hang, kicked by BE etc.
+	[] spawn {
+		private["_timeOut","_display","_control1","_control2"];
+		disableSerialization;
+		_timeOut = 0;
+		dayz_loadScreenMsg = "";
+		diag_log "DEBUG: loadscreen guard started.";
+		_display = uiNameSpace getVariable "BIS_loadingScreen";
+		_control1 = _display displayctrl 8400;
+		_control2 = _display displayctrl 102;
+		// 120 sec timeout
+		while { _timeOut < 3000 && !dayz_clientPreload && !dayz_authed } do {
+
+			if ( isNull _display ) then {
+				waitUntil { !dialog; };
+				startLoadingScreen ["","RscDisplayLoadCustom"];
+				_display = uiNameSpace getVariable "BIS_loadingScreen";
+				_control1 = _display displayctrl 8400;
+				_control2 = _display displayctrl 102;
+			};
+
+			if ( dayz_loadScreenMsg != "" ) then {
+				_control1 ctrlSetText dayz_loadScreenMsg;
+				dayz_loadScreenMsg = "";
+			};
+			_control2 ctrlSetText format["%1",round(_timeOut*0.01)];
+			_timeOut = _timeOut + 1;
+			sleep 0.01;
+		};
+		endLoadingScreen;
+	};
+
 	dayz_originalPlayer = player;
 	
-	
-	// trader menu gui by maca134
-	TraderDialogCatList = 12000;
-	TraderDialogItemList = 12001;
-	TraderDialogBuyPrice = 12002;
-	TraderDialogSellPrice = 12003;
-
-	TraderCurrentCatIndex = -1;
-	TraderCatList = -1;
-	TraderItemList = -1;
-
-	TraderDialogLoadItemList = {
-		private ["_index", "_trader_id", "_activatingPlayer"];
-		TraderItemList = -1;
-		_index = _this select 0;
-
-		if (_index < 0 or TraderCurrentCatIndex == _index) exitWith {};
-		TraderCurrentCatIndex = _index;
-
-		_trader_id = TraderCatList select _index;
-		_activatingPlayer = player;
-
-		lbClear TraderDialogItemList;
-		ctrlSetText [TraderDialogBuyPrice, ""];
-		ctrlSetText [TraderDialogSellPrice, ""];
-
-		lbAdd [TraderDialogItemList, "Loading items..."];
-
-		PVDZE_plr_TradeMenuResult = call compile format["tcacheBuy_%1;",_trader_id];
-
-		if(isNil "PVDZE_plr_TradeMenuResult") then {
-			PVDZE_plr_TradeMenu = [_activatingPlayer,_trader_id];
-			publicVariableServer  "PVDZE_plr_TradeMenu";
-			waitUntil {!isNil "PVDZE_plr_TradeMenuResult"};
-		};
-
-		lbClear TraderDialogItemList;
-		_item_list = [];
-		{
-			private ["_header", "_item", "_name", "_type", "_textPart", "_qty", "_buy", "_bqty", "_bname", "_btype", "_btextCurrency", "_sell", "_sqty", "_sname", "_stype", "_stextCurrency", "_order", "_order", "_afile", "_File", "_count", "_bag", "_bagclass", "_index", "_image"];
-			_header = _x select 0; // "TRD"
-			_item = _x select 1;
-			_name = _item select 0;
-			_type = _item select 1;
-			switch (true) do { 
-				case (_type == 1): { 
-					_type = "CfgMagazines";
-				}; 
-				case (_type == 2): { 
-					_type = "CfgVehicles";
-				}; 
-				case (_type == 3): { 
-					_type = "CfgWeapons";
-				}; 
-			}; 
-			// Display Name of item
-			_textPart =	getText(configFile >> _type >> _name >> "displayName");
-
-			// Total in stock
-			_qty = _x select 2;
-
-			// Buy Data from array
-			_buy = _x select 3;	
-			_bqty = _buy select 0;
-			_bname = _buy select 1;
-			_btype = _buy select 2;
-			switch(true)do{ 
-				case (_btype == 1): { 
-					_btype = "CfgMagazines";
-				}; 
-				case (_btype == 2): { 
-					_btype = "CfgVehicles";
-				}; 
-				case (_btype == 3): { 
-					_btype = "CfgWeapons";
-				}; 
-			}; 
-
-			// Display Name of buy item
-			_btextCurrency = getText(configFile >> _btype >> _bname >> "displayName");
-
-			_sell = _x select 4;
-			_sqty = _sell select 0;
-			_sname = _sell select 1;
-			_stype = _sell select 2;
-			switch(true)do{ 
-				case (_stype == 1): { 
-					_stype = "CfgMagazines";
-				}; 
-				case (_stype == 2): { 
-					_stype = "CfgVehicles";
-				}; 
-				case (_stype == 3): { 
-					_stype = "CfgWeapons";
-				}; 
-			}; 
-			// Display Name of sell item
-			_stextCurrency =	getText(configFile >> _stype >> _sname >> "displayName");
-
-			// Menu sort order
-			_order = _x select 5;
-
-			// Action file to use for trade
-			_afile = _x select 7;
-			_File = "\z\addons\dayz_code\actions\" + _afile + ".sqf";
-			
-			_count = 0;
-			if(_type == "CfgVehicles") then {
-				if (_afile == "trade_backpacks") then {
-					_bag = unitBackpack player;
-					_bagclass = typeOf _bag;
-					if(_name == _bagclass) then {
-						_count = 1;
-					};
-				} else {
-					_count = {(typeOf _x) == _name} count (nearestObjects [player, [_name], 20]);
-				}
-			};
-
-			if(_type == "CfgMagazines") then {
-				_count = {_x == _name} count magazines player;
-			};
-
-			if(_type == "CfgWeapons") then {
-				_count = {_x == _name} count weapons player;
-			};
-
-			_index = lbAdd [TraderDialogItemList, format["%1 (%2)", _textPart, _name]];
-
-			if (_count > 0) then {
-				lbSetColor [TraderDialogItemList, _index, [0, 1, 0, 1]];
-			};
-
-			_image = getText(configFile >> _type >> _name >> "picture");
-			lbSetPicture [TraderDialogItemList, _index, _image];
-
-			_item_list set [count _item_list, [
-				_name,
-				_textPart,
-				_bqty,
-				_bname,
-				_btextCurrency,
-				_sqty,
-				_sname,
-				_stextCurrency,
-				_header,
-				_File
-			]];
-		} forEach PVDZE_plr_TradeMenuResult;
-		TraderItemList = _item_list;
-	};
-
-	TraderDialogShowPrices = {
-		private ["_index", "_item"];
-		_index = _this select 0;
-		if (_index < 0) exitWith {};
-		while {count TraderItemList < 1} do { sleep 1; };
-		_item = TraderItemList select _index;
-		ctrlSetText [TraderDialogBuyPrice, format["%1 %2", _item select 2, _item select 4]];
-		ctrlSetText [TraderDialogSellPrice, format["%1 %2", _item select 5, _item select 7]];
-	};
-
-	TraderDialogBuy = {
-		private ["_index", "_item", "_data"];
-		_index = _this select 0;
-		if (_index < 0) exitWith {
-			cutText [(localize "str_epoch_player_6") , "PLAIN DOWN"];
-		};
-		_item = TraderItemList select _index;
-		_data = [_item select 0, _item select 3, 1, _item select 2, "buy", _item select 4, _item select 1, _item select 8];
-		[0, player, '', _data] execVM (_item select 9);
-		TraderItemList = -1;
-	};
-
-	TraderDialogSell = {
-		private ["_index", "_item", "_data"];
-		_index = _this select 0;
-		if (_index < 0) exitWith {
-			cutText [(localize "str_epoch_player_6") , "PLAIN DOWN"];
-		};
-		_item = TraderItemList select _index;
-		_data = [_item select 6, _item select 0, _item select 5, 1, "sell", _item select 1, _item select 7, _item select 8];
-		[0, player, '', _data] execVM (_item select 9);
-		TraderItemList = -1;
-	};
-
-	// murder message boards by maca134
-	/*
-	_death_record = [
-		0_victimName,
-		1_killerName,
-		2_weapon,
-		3_distance,
-		4ServerCurrentTime
-	];
-	*/
-	EpochDeathBoardDialogList = 21000;
-	EpochDeathBoardDialogSText = 21001;
-	EpochDeathBoardDeaths = [];
-
-
-	EpochDeathBoardLoad = {
-		createdialog "EpochDeathBoardDialog";
-		/*PVDZE_plr_DeathBResult = [
-			["maca134","Bob","AK_107_Kobra",100,[8,30]],
-			["Fred","Jonny","FN_FAL",42,[8,32]],
-			["maca134","Bob","M9SD",100,[5,30]],
-			["Fred","Jonny","BAF_AS50_scoped",42,[8,34]]
-		];*/
-		{
-			lbAdd [EpochDeathBoardDialogList, (_x select 0)];
-		} forEach PVDZE_plr_DeathBResult;
-	};
-
-
-	EpochDeathBoardClick = {
-		disableSerialization;
-		private ["_i", "_record", "_output", "_record_stxt", "_name", "_image", "_h", "_m", "_format"];
-		_quotes = [
-			"Death is God's way of telling you not to be such a wise guy.",
-			"What happens if you get scared half to death, twice?",
-			"Don't upset me.. I'm running out of places to hide the bodies.",
-			"Don't run, you'll just die tired.",
-			"Give me immortality or give me death.",
-			"I can't live with death; he's always leaving the toilet seat up.",
-			"Why won't you die?!?!",
-			"Guns don't kill people; death kills people. It's a proven medical fact."
-		];
-		_i = _this select 0;
-		if (_i < 0) exitWith {};
-		_output = _this select 1;
-		_record = PVDZE_plr_DeathBResult select _i;
-		_record_stxt = call compile format["epoch_death_board_record_%1;",_i];
-		if(isNil "_record_stxt") then {
-			_record_stxt = format["<t size='1.6' align='left'>%1</t><br /><br />", (_record select 0)];
-
-			_format = {
-				private ["_codeCount", "_str"];
-				_str = format["%1", _this];
-				_codeCount = (count (toArray _str));
-				if (_codeCount == 1) then {
-					_str = format["0%1", _str];
-				};
-				_str;
-			};
-			_h = ((_record select 4) select 0)+timezoneswitch;
-			_m = (_record select 4) select 1;
-		
-			_record_stxt = format["%1<t size='1' align='left'>Died at %2:%3</t><br /><br />", _record_stxt, (_h call _format), (_m call _format)];
-		
-			if ((_record select 1) != 'unknown') then {
-				_record_stxt = format["%1<t size='1' align='left'>Was killed by %2</t><br /><br />", _record_stxt, (_record select 1)];
-			};
-		
-			if ((_record select 2) != 'unknown') then {
-				_name = getText(configFile >> "cfgWeapons" >> (_record select 2) >> "displayName");
-				_image = getText(configFile >> "cfgWeapons" >> (_record select 2) >> "picture");
-				_record_stxt = format["%1<t size='1' align='left'>With a %2<br /><img size='3' image='%3' /></t><br /><br />", _record_stxt, _name, _image];
-			};
-		
-			if (format["%1", (_record select 3)] != 'unknown') then {
-				_record_stxt = format["%1<t size='1' align='left'>At a distance of %2m</t><br /><br />", _record_stxt, (_record select 3)];
-			};
-			_record_stxt = format["%1<t font='Bitstream'>%2</t>", _record_stxt, (_quotes call BIS_fnc_selectRandom)];
-			call compile format["epoch_death_board_record_%1 = ""%2"";" ,_i , _record_stxt];
-		};
-		_output ctrlSetStructuredText parseText _record_stxt;
-	};
-
-	
-	
+	progressLoadingScreen 0.8;
 };
 
-	progressLoadingScreen 0.8;
-	
-//Both
-	BIS_fnc_selectRandom =			compile preprocessFileLineNumbers "\z\addons\dayz_code\compile\BIS_fnc\fn_selectRandom.sqf";		//Checks which actions for nearby casualty
+	//Both
+	BIS_fnc_selectRandom =		compile preprocessFileLineNumbers "\z\addons\dayz_code\compile\BIS_fnc\fn_selectRandom.sqf";
 	BIS_fnc_vectorAdd =         compile preprocessFileLineNumbers "\z\addons\dayz_code\compile\BIS_fnc\fn_vectorAdd.sqf";	
 	BIS_fnc_halo =              compile preprocessFileLineNumbers "\z\addons\dayz_code\compile\BIS_fnc\fn_halo.sqf";
+	BIS_fnc_findNestedElement =	compile preprocessFileLineNumbers "\z\addons\dayz_code\compile\BIS_fnc\fn_findNestedElement.sqf";
+	BIS_fnc_param = 			compile preprocessFileLineNumbers "\z\addons\dayz_code\compile\BIS_fnc\fn_param.sqf";
+
 	fnc_buildWeightedArray = 		compile preprocessFileLineNumbers "\z\addons\dayz_code\compile\fn_buildWeightedArray.sqf";		//Checks which actions for nearby casualty
 	fnc_usec_damageVehicle =		compile preprocessFileLineNumbers "\z\addons\dayz_code\compile\fn_damageHandlerVehicle.sqf";		//Event handler run on damage
 	zombie_initialize = 			compile preprocessFileLineNumbers "\z\addons\dayz_code\init\zombie_init.sqf";
@@ -689,6 +488,24 @@ if (!isDedicated) then {
 	spawn_loot_small =			compile preprocessFileLineNumbers "\z\addons\dayz_code\compile\spawn_loot_small.sqf";
 	// player_projectileNear = 		compile preprocessFileLineNumbers "\z\addons\dayz_code\compile\player_projectileNear.sqf";
 	
+	dayz_HungerThirst = {
+		dayz_hunger = dayz_hunger + (_this select 0);
+		dayz_thirst = dayz_thirst + (_this select 1);
+	};
+
+	dayz_EjectPlayer = {
+		// check if player in vehicle
+        private ["_noDriver","_vehicle","_inVehicle"];
+        _vehicle = vehicle player;
+		_inVehicle = (_vehicle != player);
+		if(_inVehicle) then {
+			_noDriver = ((_vehicle emptyPositions "driver") > 0);
+			if (_noDriver and (speed _vehicle) != 0) then {
+				player action [ "eject", _vehicle];
+			};
+		};
+	};
+
 	player_sumMedical = {
 		private["_character","_wounds","_legs","_arms","_medical"];
 		_character = 	_this;
@@ -718,7 +535,6 @@ if (!isDedicated) then {
 		];
 		_medical
 	};
-	
 	
 	//Server Only
 	if (isServer) then {

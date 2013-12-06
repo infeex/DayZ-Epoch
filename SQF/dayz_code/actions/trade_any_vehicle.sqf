@@ -1,11 +1,11 @@
 private ["_veh","_location","_isOk","_part_out","_part_in","_qty_out","_qty_in","_qty","_buy_o_sell","_obj","_objectID","_objectUID","_bos","_started","_finished","_animState","_isMedic","_dir","_helipad","_removed","_keyColor","_keyNumber","_keySelected","_isKeyOK","_config","_damage","_tireDmg","_tires","_okToSell","_hitpoints","_needed","_activatingPlayer","_textPartIn","_textPartOut","_traderID","_playerNear"];
 
-if(TradeInprogress) exitWith { cutText [(localize "str_epoch_player_103") , "PLAIN DOWN"]; };
-TradeInprogress = true;
+if(DZE_ActionInProgress) exitWith { cutText [(localize "str_epoch_player_103") , "PLAIN DOWN"]; };
+DZE_ActionInProgress = true;
 
 // Test cannot lock while another player is nearby
 //_playerNear = {isPlayer _x} count (player nearEntities ["CAManBase", 12]) > 1;
-//if(_playerNear) exitWith { TradeInprogress = false; cutText [(localize "str_epoch_player_104") , "PLAIN DOWN"];  };
+//if(_playerNear) exitWith { DZE_ActionInProgress = false; cutText [(localize "str_epoch_player_104") , "PLAIN DOWN"];  };
 
 // [part_out,part_in, qty_out, qty_in, loc];
 
@@ -24,7 +24,12 @@ _bos = 0;
 if(_buy_o_sell == "buy") then {
 	_qty = {_x == _part_in} count magazines player;
 } else {
-	_obj = nearestObjects [(getPosATL player), [_part_in], dayz_sellDistance];
+
+	if (_part_in isKindOf "Air") then {
+		_obj = nearestObjects [(getPosATL player), [_part_in], dayz_sellDistance_air];
+	} else {
+		_obj = nearestObjects [(getPosATL player), [_part_in], dayz_sellDistance_vehicle];
+	};
 	_qty = count _obj;
 	_bos = 1;
 };
@@ -33,6 +38,7 @@ if (_qty >= _qty_in) then {
 
 	cutText [(localize "str_epoch_player_105"), "PLAIN DOWN"];
 	 
+	[1,1] call dayz_HungerThirst;
 	// force animation 
 	player playActionNow "Medic";
 
@@ -85,7 +91,9 @@ if (_qty >= _qty_in) then {
 		if (_qty >= _qty_in) then {
 
 			//["PVDZE_obj_Trade",[_activatingPlayer,_traderID,_bos]] call callRpcProcedure;
-			PVDZE_obj_Trade = [_activatingPlayer,_traderID,_bos];
+			if (isNil "_obj") then { _obj = "Unknown Vehicle" };
+			if (isNil "inTraderCity") then { inTraderCity = "Unknown Trader City" };
+			PVDZE_obj_Trade = [_activatingPlayer,_traderID,_bos,_obj,inTraderCity];
 			publicVariableServer  "PVDZE_obj_Trade";
 	
 			//diag_log format["DEBUG Starting to wait for answer: %1", PVDZE_obj_Trade];
@@ -133,8 +141,6 @@ if (_qty >= _qty_in) then {
 							//["PVDZE_veh_Publish",[_veh,[_dir,_location],_part_out,false,_keySelected]] call callRpcProcedure;
 							PVDZE_veh_Publish2 = [_veh,[_dir,_location],_part_out,false,_keySelected,_activatingPlayer];
 							publicVariableServer  "PVDZE_veh_Publish2";
-
-							player reveal _veh;
 						
 							cutText [format[("Bought %3 for %1 %2, key added to toolbelt."),_qty_in,_textPartIn,_textPartOut], "PLAIN DOWN"];
 						} else {
@@ -219,4 +225,4 @@ if (_qty >= _qty_in) then {
 	};	
 };
 
-TradeInprogress = false;
+DZE_ActionInProgress = false;

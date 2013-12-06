@@ -2,10 +2,10 @@
 delete object from db with extra waiting by [VB]AWOL
 parameters: _obj
 */
-private ["_activatingPlayer","_obj","_objectID","_objectUID","_started","_finished","_animState","_isMedic","_isOk","_proceed","_counter","_limit","_objType","_sfx","_dis","_itemOut","_countOut","_selectedRemoveOutput","_friendlies","_nearestPole","_ownerID","_refundpart","_isWreck","_findNearestPoles","_findNearestPole","_IsNearPlot","_brokenTool","_removeTool","_isDestructable","_isRemovable","_objOwnerID","_isOwnerOfObj","_preventRefund","_ipos","_item","_radius","_isWreckBuilding","_nameVehicle"];
+private ["_activatingPlayer","_obj","_objectID","_objectUID","_started","_finished","_animState","_isMedic","_isOk","_proceed","_counter","_limit","_objType","_sfx","_dis","_itemOut","_countOut","_selectedRemoveOutput","_friendlies","_nearestPole","_ownerID","_refundpart","_isWreck","_findNearestPoles","_findNearestPole","_IsNearPlot","_brokenTool","_removeTool","_isDestructable","_isRemovable","_objOwnerID","_isOwnerOfObj","_preventRefund","_ipos","_item","_radius","_isWreckBuilding","_nameVehicle","_isModular"];
 
-if(TradeInprogress) exitWith { cutText [(localize "str_epoch_player_88") , "PLAIN DOWN"]; };
-TradeInprogress = true;
+if(DZE_ActionInProgress) exitWith { cutText [(localize "str_epoch_player_88") , "PLAIN DOWN"]; };
+DZE_ActionInProgress = true;
 
 player removeAction s_player_deleteBuild;
 s_player_deleteBuild = 1;
@@ -17,7 +17,7 @@ _activatingPlayer = player;
 _objOwnerID = _obj getVariable["CharacterID","0"];
 _isOwnerOfObj = (_objOwnerID == dayz_characterID);
 
-if(_obj getVariable ["GeneratorRunning", false]) exitWith {TradeInprogress = false; cutText [(localize "str_epoch_player_89"), "PLAIN DOWN"];};
+if(_obj getVariable ["GeneratorRunning", false]) exitWith {DZE_ActionInProgress = false; cutText [(localize "str_epoch_player_89"), "PLAIN DOWN"];};
 
 _objectID 	= _obj getVariable ["ObjectID","0"];
 _objectUID	= _obj getVariable ["ObjectUID","0"];
@@ -31,6 +31,7 @@ _isDestructable = _obj isKindOf "BuiltItems";
 _isWreck = _objType in DZE_isWreck;
 _isRemovable = _objType in DZE_isRemovable;
 _isWreckBuilding = _objType in DZE_isWreckBuilding;
+_isModular = _obj isKindOf "ModularItems";
 
 _limit = 3;
 if(isNumber (configFile >> "CfgVehicles" >> _objType >> "constructioncount")) then {
@@ -65,6 +66,11 @@ _nameVehicle = getText(configFile >> "CfgVehicles" >> _objType >> "displayName")
 
 cutText [format[(localize "str_epoch_player_162"),_nameVehicle], "PLAIN DOWN"];
 
+if (_isModular) then {
+     //allow previous cutText to show, then show this if modular.
+     cutText ["Deconstructing modular buildables will not refund any components.", "PLAIN"];
+};
+
 // Alert zombies once.
 [player,50,true,(getPosATL player)] spawn player_alertZombies;
 
@@ -79,7 +85,7 @@ while {_isOk} do {
 		_isOk = false;
 		_proceed = false;
 	};
-
+	[1,1] call dayz_HungerThirst;
 	player playActionNow "Medic";
 	_dis=20;
 	[player,_dis,true,(getPosATL player)] spawn player_alertZombies;
@@ -224,5 +230,5 @@ if (_proceed) then {
 		player playActionNow "stop";
 	};
 };
-TradeInprogress = false;
+DZE_ActionInProgress = false;
 s_player_deleteBuild = -1;

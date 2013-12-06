@@ -3,18 +3,33 @@ _dikCode = 	_this select 1;
 
 _handled = false;
 
-if (_dikCode in[0x58,0x57,0x44,0x43,0x42,0x41,0x40,0x3F,0x3E,0x3D,0x3C,0x3B,0x0B,0x0A,0x09,0x08,0x07,0x06,0x05]) then {
+if (_dikCode in[0x02,0x03,0x04,0x58,0x57,0x44,0x43,0x42,0x41,0x40,0x3F,0x3E,0x3D,0x3C,0x3B,0x0B,0x0A,0x09,0x08,0x07,0x06,0x05]) then {
 	_handled = true;
 };
 
-if ((_dikCode == 0x3E or _dikCode == 0x0F or _dikCode == 0xD3) and (diag_tickTime - dayz_lastCheckBit > 10)) then {
-	dayz_lastCheckBit = diag_tickTime;
-	call dayz_forceSave;
+if ((_dikCode == 0x3E or _dikCode == 0x0F or _dikCode == 0xD3)) then {
+	if(diag_tickTime - dayz_lastCheckBit > 10) then {
+		dayz_lastCheckBit = diag_tickTime;
+		call dayz_forceSave;
+	};
+	call dayz_EjectPlayer;
+};
+
+// esc
+if (_dikCode == 0x01) then {
+	DZE_cancelBuilding = true;
+	call dayz_EjectPlayer;
 };
 
 // surrender 
 if (_dikCode in actionKeys "Surrender") then {
-	if (!DZE_Surrender and !(player isKindOf  "PZombie_VB")) then {
+	
+	_vehicle = vehicle player;
+	_inVehicle = (_vehicle != player);
+	_onLadder =	(getNumber (configFile >> "CfgMovesMaleSdr" >> "States" >> (animationState player) >> "onLadder")) == 1;
+	_canDo = (!r_drag_sqf and !r_player_unconscious and !_onLadder and !_inVehicle);
+	
+	if (_canDo and !DZE_Surrender and !(player isKindOf  "PZombie_VB")) then {
 		DZE_Surrender = true;
 		_dropPrimary = false;
 		_dropSecondary = false;
@@ -74,7 +89,10 @@ _ctrl = 	_this select 3;
 _alt =		_this select 4;
 
 //diag_log format["Keypress: %1", _this];
-
+if ((_dikCode in actionKeys "Gear") and (vehicle player != player) and !_shift and !_ctrl and !_alt && !dialog) then {
+			createGearDialog [player, "RscDisplayGear"];
+			_handled = true;
+};
 
 if (_dikCode in (actionKeys "GetOver")) then {
 	
@@ -165,11 +183,6 @@ if (_dikCode == 0x12 or (_dikCode in actionKeys "User18")) then {
 // numpad 5 0x4C now space 0x39
 if (_dikCode == 0x39 or (_dikCode in actionKeys "User19")) then {
 	DZE_5 = true;
-};
-
-// esc
-if (_dikCode == 0x01) then {
-	DZE_cancelBuilding = true;
 };
 
 _handled

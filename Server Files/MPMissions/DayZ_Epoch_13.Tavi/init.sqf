@@ -16,6 +16,8 @@ dayz_previousID = 0;
 player setVariable ["BIS_noCoreConversations", true];
 //disable radio messages to be heard and shown in the left lower corner of the screen
 enableRadio false;
+// May prevent "how are you civillian?" messages from NPC
+enableSentences false;
 
 // DayZ Epoch config
 spawnShoremode = 1; // Default = 1 (on shore)
@@ -24,8 +26,6 @@ spawnArea = 2500; // Default = 1500
 MaxVehicleLimit = 400; // Default = 50
 MaxDynamicDebris = 700; // Default = 100
 dayz_MapArea = 20000; // Default = 10000
-
-dayz_sellDistance = 40;
 
 EpochEvents = [["any","any","any","any",30,"crash_spawner"],["any","any","any","any",0,"crash_spawner"],["any","any","any","any",15,"supply_drop"]];
 dayz_fullMoonNights = true;
@@ -60,40 +60,11 @@ progressLoadingScreen 1.0;
 
 "filmic" setToneMappingParams [0.153, 0.357, 0.231, 0.1573, 0.011, 3.750, 6, 4]; setToneMapping "Filmic";
 
-/* BIS_Effects_* fixes from Dwarden */
-BIS_Effects_EH_Killed = compile preprocessFileLineNumbers "\z\addons\dayz_code\system\BIS_Effects\killed.sqf";
-BIS_Effects_AirDestruction = compile preprocessFileLineNumbers "\z\addons\dayz_code\system\BIS_Effects\AirDestruction.sqf";
-BIS_Effects_AirDestructionStage2 = compile preprocessFileLineNumbers "\z\addons\dayz_code\system\BIS_Effects\AirDestructionStage2.sqf";
-
-BIS_Effects_globalEvent = {
-	BIS_effects_gepv = _this;
-	publicVariable "BIS_effects_gepv";
-	_this call BIS_Effects_startEvent;
-};
-
-BIS_Effects_startEvent = {
-	switch (_this select 0) do {
-		case "AirDestruction": {
-				[_this select 1] spawn BIS_Effects_AirDestruction;
-		};
-		case "AirDestructionStage2": {
-				[_this select 1, _this select 2, _this select 3] spawn BIS_Effects_AirDestructionStage2;
-		};
-		case "Burn": {
-				[_this select 1, _this select 2, _this select 3, false, true] spawn BIS_Effects_Burn;
-		};
-	};
-};
-
-"BIS_effects_gepv" addPublicVariableEventHandler {
-	(_this select 1) call BIS_Effects_startEvent;
-};
-
 if (isServer) then {
-	call compile preprocessFileLineNumbers "dynamic_vehicle.sqf";				//Compile vehicle configs
+	call compile preprocessFileLineNumbers "\z\addons\dayz_server\missions\DayZ_Epoch_13.Tavi\dynamic_vehicle.sqf";				//Compile vehicle configs
 	
 	// Add trader citys
-	_nil = [] execVM "mission.sqf";
+	_nil = [] execVM "\z\addons\dayz_server\missions\DayZ_Epoch_13.Tavi\mission.sqf";
 	_serverMonitor = 	[] execVM "\z\addons\dayz_code\system\server_monitor.sqf";
 };
 
@@ -106,7 +77,7 @@ if (!isDedicated) then {
 	//Run the player monitor
 	_id = player addEventHandler ["Respawn", {_id = [] spawn player_death;}];
 	_playerMonitor = 	[] execVM "\z\addons\dayz_code\system\player_monitor.sqf";	
-	_void = [] execVM "R3F_Realism\R3F_Realism_Init.sqf";
+	
 	
 	//Lights
 	//[0,0,true,true,true,58,280,600,[0.698, 0.556, 0.419],"Generator_DZ",0.1] execVM "\z\addons\dayz_code\compile\local_lights_init.sqf";
@@ -114,3 +85,5 @@ if (!isDedicated) then {
 #include "\z\addons\dayz_code\system\REsec.sqf"
 //Start Dynamic Weather
 execVM "\z\addons\dayz_code\external\DynamicWeatherEffects.sqf";
+
+#include "\z\addons\dayz_code\system\BIS_Effects\init.sqf"

@@ -4,8 +4,8 @@
 */
 private ["_location","_dir","_classname","_text","_object","_objectID","_objectUID","_newclassname","_refund","_obj","_upgrade","_objectCharacterID","_canBuildOnPlot","_friendlies","_nearestPole","_ownerID","_distance","_needText","_findNearestPoles","_findNearestPole","_IsNearPlot","_i","_invResult","_itemOut","_countOut","_abortInvAdd","_addedItems"];
 
-if(TradeInprogress) exitWith { cutText [(localize "str_epoch_player_48") , "PLAIN DOWN"]; };
-TradeInprogress = true;
+if(DZE_ActionInProgress) exitWith { cutText [(localize "str_epoch_player_48") , "PLAIN DOWN"]; };
+DZE_ActionInProgress = true;
 
 player removeAction s_player_downgrade_build;
 s_player_downgrade_build = 1;
@@ -52,7 +52,7 @@ if(_IsNearPlot == 0) then {
 };
 
 // exit if not allowed due to plot pole
-if(!_canBuildOnPlot) exitWith {  TradeInprogress = false; cutText [format[(localize "str_epoch_player_141"),_needText,_distance] , "PLAIN DOWN"]; };
+if(!_canBuildOnPlot) exitWith {  DZE_ActionInProgress = false; cutText [format[(localize "str_epoch_player_141"),_needText,_distance] , "PLAIN DOWN"]; };
 
 // get cursortarget from addaction
 _obj = _this select 3;
@@ -60,7 +60,7 @@ _obj = _this select 3;
 // Current charID
 _objectCharacterID 	= _obj getVariable ["CharacterID","0"];
 
-if(DZE_Lock_Door != _objectCharacterID) exitWith {  TradeInprogress = false; cutText [(localize "str_epoch_player_49") , "PLAIN DOWN"]; };
+if(DZE_Lock_Door != _objectCharacterID) exitWith {  DZE_ActionInProgress = false; cutText [(localize "str_epoch_player_49") , "PLAIN DOWN"]; };
 
 // Find objectID
 _objectID 	= _obj getVariable ["ObjectID","0"];
@@ -68,7 +68,7 @@ _objectID 	= _obj getVariable ["ObjectID","0"];
 // Find objectUID
 _objectUID	= _obj getVariable ["ObjectUID","0"];
 
-if(_objectID == "0" && _objectUID == "0") exitWith {TradeInprogress = false; s_player_upgrade_build = -1; cutText [(localize "str_epoch_player_50"), "PLAIN DOWN"];};
+if(_objectID == "0" && _objectUID == "0") exitWith {DZE_ActionInProgress = false; s_player_upgrade_build = -1; cutText [(localize "str_epoch_player_50"), "PLAIN DOWN"];};
 
 // Get classname
 _classname = typeOf _obj;
@@ -84,7 +84,7 @@ if ((count _upgrade) > 0) then {
 	_newclassname = _upgrade select 0;
 
 	_refund = _upgrade select 1;
-	
+	[1,1] call dayz_HungerThirst;
 	player playActionNow "Medic";
 	[player,20,true,(getPosATL player)] spawn player_alertZombies;
 		
@@ -120,6 +120,12 @@ if ((count _upgrade) > 0) then {
 
 		// Get direction
 		_dir = getDir _obj;
+		
+		// Reset the character ID on locked doors before they inherit the newclassname
+		if (_classname in DZE_DoorsLocked) then {
+			_object setVariable ["CharacterID",dayz_characterID,true];
+			_objectCharacterID = dayz_characterID;
+		};
 
 		_classname = _newclassname;
 			
@@ -131,10 +137,11 @@ if ((count _upgrade) > 0) then {
 
 		// Set location
 		_object setPosATL _location;
+		
 	
 		cutText [format[(localize "str_epoch_player_142"),_text], "PLAIN DOWN", 5];
 
-		PVDZE_obj_Swap = [_objectCharacterID,_object,[_dir,_location],_classname,_obj,_objectID,_objectUID];
+		PVDZE_obj_Swap = [_objectCharacterID,_object,[_dir,_location],_classname,_obj,_objectID,_objectUID,player];
 		publicVariableServer "PVDZE_obj_Swap";
 
 		player reveal _object;
@@ -151,5 +158,5 @@ if ((count _upgrade) > 0) then {
 	cutText [(localize "str_epoch_player_51"), "PLAIN DOWN"];
 };
 
-TradeInprogress = false;
+DZE_ActionInProgress = false;
 s_player_downgrade_build = -1;

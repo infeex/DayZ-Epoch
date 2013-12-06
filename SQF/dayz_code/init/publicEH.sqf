@@ -51,21 +51,36 @@ if (isServer) then {
 	// Dayz epoch custom 
 	"PVDZE_veh_Publish"		addPublicVariableEventHandler {(_this select 1) spawn server_publishVeh};
 	"PVDZE_veh_Publish2"	addPublicVariableEventHandler {(_this select 1) spawn server_publishVeh2};
+	"PVDZE_veh_Upgrade"	addPublicVariableEventHandler {(_this select 1) spawn server_publishVeh3};
 	"PVDZE_obj_Trade"		addPublicVariableEventHandler {(_this select 1) spawn server_tradeObj};
 	"PVDZE_plr_TradeMenu"	addPublicVariableEventHandler {(_this select 1) spawn server_traders};
 	"PVDZE_plr_DeathB"		addPublicVariableEventHandler {(_this select 1) spawn server_deaths};
+	
+	
+	//Area Maintenance
+	"maintainArea_log"		addPublicVariableEventHandler {
+		_val = _this select 1;
+		_player = _val select 0;
+		_playerName = name _player;
+		_playerID = getPlayerUID _player;
+		_target = _val select 1;
+		_position = position _target;
+		_count = _val select 2;
+		diag_log format["MAINTAIN_AREA: Player %1 (%2) has maintained %3 building parts at position %4", _playerName, _playerID, _count, _position];
+	};
 };
 
 //Client only
 if (!isDedicated) then {
-	"PVDZE_plr_SetDate"		addPublicVariableEventHandler {(_this select 1) call player_setDate};
-	"PVDZE_plr_SetWeather"	addPublicVariableEventHandler {zeroPreviousWeather = zeroCurrentWeather; zeroCurrentWeather = (_this select 1)};
+	"PVDZE_plr_SetDate"		addPublicVariableEventHandler {setDate (_this select 1)};
+	"PVDZE_plr_SetSaveTime"	addPublicVariableEventHandler {DZE_SaveTime = (_this select 1)};
 	"PVDZE_obj_RoadFlare"	addPublicVariableEventHandler {(_this select 1) spawn object_roadFlare};
 	"PVDZE_plr_Morph2"		addPublicVariableEventHandler {(_this select 1) call player_serverModelChange};
 	"PVDZE_plr_Morph"		addPublicVariableEventHandler {(_this select 1) call server_switchPlayer};
-	"PVDZE_obj_Fire"		addPublicVariableEventHandler {nul=(_this select 1) spawn BIS_Effects_Burn};
-	"PVDZE_plr_FriendRQ"	addPublicVariableEventHandler {cutText[(_this select 1),"PLAIN DOWN"];};
+	"PVDZE_obj_Fire"		addPublicVariableEventHandler {nulexp=(_this select 1) spawn BIS_Effects_Burn};
+	"PVDZE_plr_FriendRQ"	addPublicVariableEventHandler {(_this select 1) call player_tagFriendlyMsg};
 	
+	// "PVDZE_obj_Debris"		addPublicVariableEventHandler {(_this select 1) call local_roadDebris};
 	
 	"norrnRaDrag"			addPublicVariableEventHandler {(_this select 1) execVM "\z\addons\dayz_code\medical\publicEH\animDrag.sqf"};
 	"norrnRnoAnim"			addPublicVariableEventHandler {(_this select 1) execVM "\z\addons\dayz_code\medical\publicEH\noAnim.sqf"};

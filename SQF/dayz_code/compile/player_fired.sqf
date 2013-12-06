@@ -16,10 +16,14 @@ dayz_firedCooldown = time;
 dayz_combat = 1;
 
 if (_ammo isKindOf "Melee") exitWith {
-	_unit playActionNow "GestureSwing";
+	
+	if(!(_ammo isKindOf "Chainsaw_Swing_Ammo")) then {
+		_unit playActionNow "GestureSwing";
+		[1,1] call dayz_HungerThirst;
+	};
 
 	// harvest wood check
-	_id = _this spawn player_harvest;
+	_this call player_harvest;
 };
 
 //Smoke Grenade

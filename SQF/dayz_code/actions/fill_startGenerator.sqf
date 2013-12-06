@@ -1,7 +1,7 @@
 private ["_vehicle","_started","_finished","_animState","_isMedic","_soundSource"];
 
-if(TradeInprogress) exitWith { cutText [(localize "str_epoch_player_24") , "PLAIN DOWN"] };
-TradeInprogress = true;
+if(DZE_ActionInProgress) exitWith { cutText [(localize "str_epoch_player_24") , "PLAIN DOWN"] };
+DZE_ActionInProgress = true;
 
 player removeAction s_player_fillgen;
 s_player_fillgen = 1;
@@ -9,6 +9,7 @@ s_player_fillgen = 1;
 // Use target from addaction
 _vehicle = 	_this select 3;
 
+[1,1] call dayz_HungerThirst;
 // force animation 
 player playActionNow "Medic";
 
@@ -18,7 +19,7 @@ r_doLoop = true;
 _started = false;
 _finished = false;
 
-cutText [(localize "str_epoch_player_25") "PLAIN DOWN"];
+cutText [(localize "str_epoch_player_25"), "PLAIN DOWN"];
 
 [player,50,true,(getPosATL player)] spawn player_alertZombies;
 
@@ -86,5 +87,5 @@ if (_finished) then {
 	};
 };
 
-TradeInprogress = false;
+DZE_ActionInProgress = false;
 s_player_fillgen = -1;
