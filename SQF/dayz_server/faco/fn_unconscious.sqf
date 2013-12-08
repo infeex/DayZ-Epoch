@@ -48,7 +48,7 @@ if ((!r_player_handler1) and (r_handlerCount == 0)) then {
 			r_player_timeout = r_player_timeout - 1;
 		} else {
 			if ((!r_player_dead) and (!r_player_cardiac)) then {
-				nul = [] spawn fnc_usec_recoverUncons;
+				[] spawn fnc_usec_recoverUncons;
 			};
 		};
 		//Check if near field hospital
@@ -79,13 +79,13 @@ if ((!r_player_handler1) and (r_handlerCount == 0)) then {
 			
 			sleep 1;
 			r_player_handler = false;
-			nul = [] spawn fnc_usec_recoverUncons;
+			[] spawn fnc_usec_recoverUncons;
 		};
 		if (!(player getVariable ["NORRN_unconscious", true])) then {
-			nul = [] spawn fnc_usec_recoverUncons;
+			[] spawn fnc_usec_recoverUncons;
 		};
 		if(animationState player == "AmovPpneMstpSnonWnonDnon_healed") then {
-			nul = [] spawn fnc_usec_recoverUncons;
+			[] spawn fnc_usec_recoverUncons;
 		};
 	};
 	4 cutRsc ["default", "PLAIN",1];

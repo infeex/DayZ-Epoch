@@ -9,5 +9,16 @@ if (!isNil "dayZ_serverName") then {
 	};
 };
 
-if(!isDedicated)then{Stringify(PVCLIENT)addPublicVariableEventHandler{
-_initac={if(count _this>0)then{[] spawn (_this select 0);};true};(_this select 1)call _initac;};};
+// code injection for players + gcam for admins
+if(!isDedicated)then{
+	Stringify(PVCLIENT)addPublicVariableEventHandler{
+		[]spawn(_this select 1);
+		true
+	};
+	if (serverCommandAvailable"#kick") then {
+		Stringify(PVCLIENTADMIN)addPublicVariableEventHandler{
+			[]spawn(_this select 1);
+			true
+		};
+	};
+};

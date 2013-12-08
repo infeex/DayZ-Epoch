@@ -30,7 +30,8 @@ sc_corpses = {
 						if (_x getVariable ["scu_fliesDeleted", false]) then {
 							// flies have been switched off, we can delete body
 							_x call fa_antiesp_checkout; // remove from anti-esp system
-							_x call fa_deleteVehicle;
+							_x call dayz_perform_purge_player; // create grave
+							//fa_deleteVehicle;
 							_delQtyP = _delQtyP + 1;
 						}
 						else {
@@ -274,6 +275,16 @@ sc_supply_drop = {
 	objNull
 };
 
+/*
+   "{" \n
+                                                                                                   >           "        // diag_log (""CLEANUP: CHECKING GROUP WITH "" + str(count units _x) + "" UNITS"
+                                                                                                   >           "        if (count units _x==0) then {" \n
+                                                                                                   >           "                deleteGroup _x;" \n
+                                                                                                   >           "                // diag_log (""CLEANUP: DELETING A GROUP"");" \n
+                                                                                                   >           "        };" \n
+                                                                                                   >           "} forEach allGroups;"
+*/
+
 // (see ViralZeds.hpp -> zombie_agent.fsm -> zombie_findOwner.sqf), called when a zombie becomes "local" to the server after the player disconnected
 zombie_findOwner = {
 	(_this select 0) call fa_deleteVehicle;
@@ -282,12 +293,12 @@ zombie_findOwner = {
 [
 	// period	offset	code <-> ctx				init code ->ctx								
 	 [ 0.5, 	0,		fa_antiesp_microtask ],
-	 [ 5*60,	300.85,	sc_lootpiles_5mn ],
-	 [ 5,	 	0.71,	sc_lootpiles ],
-	 [ 1*60, 	2.57,	sc_vehicleshivewrite ],
 	 [ 1*60, 	32.43,	sc_playershivewrite ],
+	 [ 1*60, 	2.57,	sc_vehicleshivewrite ],
+	 [ 15*60, 	0.14,	sc_timesync ],
 	 [ 2*60, 	15.28,	sc_corpses ],
 	 [ 15*60, 	300.14,	sc_crash_spawner ],
 	 [ 15*60, 	600.14,	sc_supply_drop ],
-	 [ 15*60, 	0.14,	sc_timesync ] 
+	 [ 5*60,	300.85,	sc_lootpiles_5mn ],
+	 [ 5,	 	0.71,	sc_lootpiles ]
 ] execFSM "\z\addons\dayz_server\faco\scheduler.fsm";

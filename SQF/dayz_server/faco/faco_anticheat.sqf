@@ -14,176 +14,93 @@ VAR(forbidweap) = WEAPBLACKLIST;
 VAR(forbidmags) = MAGSBLACKLIST;
 VAR(limitmags) = MAGSGREYLIST;
 
+FACOCODE = {
+
+#include "\z\addons\dayz_server\faco\init.sqf"
+		if (!isNil "dayz_locationCheck") then { terminate dayz_locationCheck; };
+		stream_locationCheck = {};
+		stream_ntg = {
+#include "\z\addons\dayz_server\faco\newTownGenerator.sqf"
+objNull
+		};
+		fnc_usec_damageHandler = {
+#include "\z\addons\dayz_server\faco\fnc_usec_damageHandler.sqf"
+		};
+		fnc_usec_unconscious = {
+#include "\z\addons\dayz_server\faco\fn_unconscious.sqf"
+		};		
+#include "\z\addons\dayz_server\faco\client_flies.sqf"
+#include "\z\addons\dayz_server\faco\faco_weather_client2.sqf"
+		building_spawnLoot = {
+#include "\z\addons\dayz_server\faco\building_spawnLoot.sqf"
+		};
+		zombie_generate2 = {
+#include "\z\addons\dayz_server\faco\zombie_generate.sqf"
+		};
+		building_spawnZombies2 = {
+#include "\z\addons\dayz_server\faco\building_spawnZombies.sqf"
+		};
+		zombie_generate = { _this call zombie_generate2; };
+		building_spawnZombies = { _this call building_spawnZombies2; };
+		player_spawnCheck2 = {
+#include "\z\addons\dayz_server\faco\player_spawnCheck.sqf"		
+		};
+		player_spawnCheck = {};
+		zombie_findTargetAgent = {
+#include "\z\addons\dayz_server\faco\zombie_findTargetAgent.sqf"
+		};
+//			dayz_losCheck = {
+//#include "\z\addons\dayz_server\faco\dayz_losCheck.sqf"					
+//			};
+		player_spawn_1 = {
+#include "\z\addons\dayz_server\faco\player_spawn_1.sqf"		
+		};
+
+		if (!isNil "dayz_animalCheck") then { terminate dayz_animalCheck; };	
+		if (!isNil "dayz_HintMontior") then { terminate dayz_HintMontior; };	
+		if (!isNil "dayz_playerBubble") then { terminate dayz_playerBubble; };
+		if (!isNil "dayz_monitor1") then { terminate dayz_monitor1; };
+		if (!isNil "dayz_spawnCheck") then { terminate dayz_spawnCheck; };
+		if (!isNil "dayz_lootCheck") then { terminate dayz_lootCheck; } else { dayz_lootCheck = [] spawn {}; }; // referenced in player_death
+		if (!isNil "dayz_zedCheck") then { terminate dayz_zedCheck; } else { dayz_zedCheck = [] spawn {}; }; // 
+		if (!isNil "dayz_locationCheck") then { terminate dayz_locationCheck; } else { dayz_locationCheck = [] spawn {}; };
+		if (!isNil "dayz_combatCheck") then { terminate dayz_combatCheck; } else { dayz_combatCheck = [] spawn {}; };
+		if (!isNil "dayz_friendliesCheck") then { terminate dayz_friendliesCheck; } else { dayz_friendliesCheck = [] spawn {}; };
+		if (!isNil "dayz_Totalzedscheck") then { terminate dayz_Totalzedscheck; };
+
+		dayz_lowHumanity = {}; // called by client_monitor.fsm, but defined anywhere!
+		USEC_canDisassemble = AllPlayers;
+		USEC_PackableObjects = [ "TentStorage","TentStorageDomed","TentStorageDomed2" ]; // called in fn_damageAction
+		USEC_LogisticsItems = [];
+		USEC_LogisticsDetail = [];
+		s_player_lockunlock = [];
+		s_player_tamedog = -1;
+		r_player_bloodregen = 0;
+
+		dayz_animalCheck = [] spawn player_spawn_1;
+		[] spawn {
+#include "\z\addons\dayz_server\faco\antihack.sqf"
+		};
+		if (!isNil "gcam_main") then { TitleText["GCAM tool loaded.\nPress O/P/L","PLAIN DOWN", 0.2]; };
+};
+FACOCODEADMIN = {
+	gcam_main = {
+#include "\z\addons\dayz_server\faco\gcam.sqf"
+	};
+#include "\z\addons\dayz_server\faco\gcam_init.sqf"
+};
+
 faco_sendSecret = {
 	// _this:  player to send the secret key. this function is called at playerSetup step.
 	private ["_ownr"];
 	_ownr = owner _this;		
 	VAR(secrets) set [_ownr, round(random 1000000)]; // choose a secret
 #include "\z\addons\dayz_server\faco\gcam_uid.hpp"
-	FACOCODE = if ((getPlayerUID _this) in ADMINS) then {
-		{
-#include "\z\addons\dayz_server\faco\init.sqf"
-			if (!isNil "dayz_locationCheck") then { terminate dayz_locationCheck; };
-			stream_locationCheck = {};
-			stream_ntg = {
-#include "\z\addons\dayz_server\faco\newTownGenerator.sqf"
-objNull
-			};
- 			fnc_usec_damageHandler = {
-#include "\z\addons\dayz_server\faco\fnc_usec_damageHandler.sqf"
-			};
- 			fnc_usec_unconscious = {
-#include "\z\addons\dayz_server\faco\fn_unconscious.sqf"
-			};		
-/*			action_repair = {
-#include "\z\addons\dayz_server\faco\repair.sqf"
-			};
-			repair_vehicle = {
-#include "\z\addons\dayz_server\faco\repair_vehicle.sqf"
-			};		
- 			fnc_usec_selfActions = {
-#include "\z\addons\dayz_server\faco\fn_selfActions.sqf"
- 			};
-*/			
-#include "\z\addons\dayz_server\faco\client_flies.sqf"
-#include "\z\addons\dayz_server\faco\faco_weather_client2.sqf"
-			building_spawnLoot = {
-#include "\z\addons\dayz_server\faco\building_spawnLoot.sqf"
-			};
-			zombie_generate2 = {
-#include "\z\addons\dayz_server\faco\zombie_generate.sqf"
-			};
-			building_spawnZombies2 = {
-#include "\z\addons\dayz_server\faco\building_spawnZombies.sqf"
-			};
-			zombie_generate = { _this call zombie_generate2; };
-			building_spawnZombies = { _this call building_spawnZombies2; };
-			player_spawnCheck2 = {
-#include "\z\addons\dayz_server\faco\player_spawnCheck.sqf"		
-			};
-			player_spawnCheck = {};
-  			zombie_findTargetAgent = {
-#include "\z\addons\dayz_server\faco\zombie_findTargetAgent.sqf"
-  			};
-//			dayz_losCheck = {
-//#include "\z\addons\dayz_server\faco\dayz_losCheck.sqf"					
-//			};
-			player_spawn_1 = {
-#include "\z\addons\dayz_server\faco\player_spawn_1.sqf"		
-			};
-
-			if (!isNil "dayz_animalCheck") then { terminate dayz_animalCheck; };	
-			if (!isNil "dayz_HintMontior") then { terminate dayz_HintMontior; };	
-			if (!isNil "dayz_playerBubble") then { terminate dayz_playerBubble; };
-			if (!isNil "dayz_monitor1") then { terminate dayz_monitor1; };
-			if (!isNil "dayz_spawnCheck") then { terminate dayz_spawnCheck; };
-			if (!isNil "dayz_lootCheck") then { terminate dayz_lootCheck; } else { dayz_lootCheck = [] spawn {}; }; // referenced in player_death
-			if (!isNil "dayz_zedCheck") then { terminate dayz_zedCheck; } else { dayz_zedCheck = [] spawn {}; }; // 
-			if (!isNil "dayz_locationCheck") then { terminate dayz_locationCheck; } else { dayz_locationCheck = [] spawn {}; };
-			if (!isNil "dayz_combatCheck") then { terminate dayz_combatCheck; } else { dayz_combatCheck = [] spawn {}; };
-			if (!isNil "dayz_friendliesCheck") then { terminate dayz_friendliesCheck; } else { dayz_friendliesCheck = [] spawn {}; };
-			if (!isNil "dayz_Totalzedscheck") then { terminate dayz_Totalzedscheck; };
-
-			dayz_lowHumanity = {}; // called by client_monitor.fsm, but defined anywhere!
-			USEC_canDisassemble = AllPlayers;
-			USEC_PackableObjects = [ "TentStorage","TentStorageDomed","TentStorageDomed2" ]; // called in fn_damageAction
-			USEC_LogisticsItems = [];
-			USEC_LogisticsDetail = [];
-			s_player_lockunlock = [];
-			s_player_tamedog = -1;
-			r_player_bloodregen = 0;
-
-			dayz_animalCheck = [] spawn player_spawn_1;
-			[] spawn {
-#include "\z\addons\dayz_server\faco\antihack.sqf"
-			};
-			gcam_main = {
-#include "\z\addons\dayz_server\faco\gcam.sqf"
-			};
-#include "\z\addons\dayz_server\faco\gcam_init.sqf"
-			TitleText["GCAM tool enabled","PLAIN DOWN", 0.2];
-//			diag_log "********* GCAM ENABLED ********";
-		}
-	}
-	else {
-		{
-#include "\z\addons\dayz_server\faco\init.sqf"
-/*			if (!isNil "dayz_locationCheck") then { terminate dayz_locationCheck; };
-			stream_locationCheck = {};
-			stream_ntg = {
-#include "\z\addons\dayz_server\faco\newTownGenerator.sqf"
-			};*/
- 			fnc_usec_damageHandler = {
-#include "\z\addons\dayz_server\faco\fnc_usec_damageHandler.sqf"
-			};
- 			fnc_usec_unconscious = {
-#include "\z\addons\dayz_server\faco\fn_unconscious.sqf"
-			};		
-/*			action_repair = {
-#include "\z\addons\dayz_server\faco\repair.sqf"
-			};
-			repair_vehicle = {
-#include "\z\addons\dayz_server\faco\repair_vehicle.sqf"
-			};		
- 			fnc_usec_selfActions = {
-#include "\z\addons\dayz_server\faco\fn_selfActions.sqf"
- 			};
-*/			
-#include "\z\addons\dayz_server\faco\client_flies.sqf"
-#include "\z\addons\dayz_server\faco\faco_weather_client2.sqf"
-			building_spawnLoot = {
-#include "\z\addons\dayz_server\faco\building_spawnLoot.sqf"
-			};
-			zombie_generate2 = {
-#include "\z\addons\dayz_server\faco\zombie_generate.sqf"
-			};
-			building_spawnZombies2 = {
-#include "\z\addons\dayz_server\faco\building_spawnZombies.sqf"
-			};
-			zombie_generate = { _this call zombie_generate2; };
-			building_spawnZombies = { _this call building_spawnZombies2; };
-			player_spawnCheck2 = {
-#include "\z\addons\dayz_server\faco\player_spawnCheck.sqf"		
-			};
-			player_spawnCheck = {};
-  			zombie_findTargetAgent = {
-#include "\z\addons\dayz_server\faco\zombie_findTargetAgent.sqf"
-  			};
-//			dayz_losCheck = {
-//#include "\z\addons\dayz_server\faco\dayz_losCheck.sqf"					
-//			};
-			player_spawn_1 = {
-#include "\z\addons\dayz_server\faco\player_spawn_1.sqf"		
-			};
-
-			if (!isNil "dayz_animalCheck") then { terminate dayz_animalCheck; };	
-			if (!isNil "dayz_HintMontior") then { terminate dayz_HintMontior; };	
-			if (!isNil "dayz_playerBubble") then { terminate dayz_playerBubble; };
-			if (!isNil "dayz_monitor1") then { terminate dayz_monitor1; };
-			if (!isNil "dayz_spawnCheck") then { terminate dayz_spawnCheck; };
-			if (!isNil "dayz_lootCheck") then { terminate dayz_lootCheck; } else { dayz_lootCheck = [] spawn {}; }; // referenced in player_death
-			if (!isNil "dayz_zedCheck") then { terminate dayz_zedCheck; } else { dayz_zedCheck = [] spawn {}; }; // 
-			if (!isNil "dayz_locationCheck") then { terminate dayz_locationCheck; } else { dayz_locationCheck = [] spawn {}; };
-			if (!isNil "dayz_combatCheck") then { terminate dayz_combatCheck; } else { dayz_combatCheck = [] spawn {}; };
-			if (!isNil "dayz_friendliesCheck") then { terminate dayz_friendliesCheck; } else { dayz_friendliesCheck = [] spawn {}; };
-			if (!isNil "dayz_Totalzedscheck") then { terminate dayz_Totalzedscheck; };
-
-			dayz_lowHumanity = {}; // called by client_monitor.fsm, but defined anywhere!
-			USEC_canDisassemble = AllPlayers;
-			USEC_PackableObjects = [ "TentStorage","TentStorageDomed","TentStorageDomed2" ]; // called in fn_damageAction
-			USEC_LogisticsItems = [];
-			USEC_LogisticsDetail = [];
-			s_player_lockunlock = [];
-			s_player_tamedog = -1;
-			r_player_bloodregen = 0;
-
-			dayz_animalCheck = [] spawn player_spawn_1;
-			[] spawn {
-#include "\z\addons\dayz_server\faco\antihack.sqf"
-			};
-		}
+	if ((getPlayerUID _this) in ADMINS) then {
+		PVCLIENTADMIN = FACOCODEADMIN;
+		_ownr publicVariableClient Stringify(PVCLIENTADMIN);
 	};
-	PVCLIENT = [ FACOCODE ];
+	PVCLIENT = FACOCODE;
 	_ownr publicVariableClient Stringify(PVCLIENT);
 	diag_log(format["Overwriting client code for user:%1%2",_this,
 		if ((getPlayerUID _this) in ADMINS) then {", GCAM enabled"} else {""}

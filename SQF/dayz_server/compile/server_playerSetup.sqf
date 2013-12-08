@@ -232,34 +232,31 @@ _playerObj setVariable["humanity_CHK",_humanity];
 //_playerObj setVariable["worldspace",_worldspace,true];
 //_playerObj setVariable["state",_state,true];
 _playerObj setVariable["lastPos",getPosATL _playerObj];
-// FACO >>
-_worldspace = (+_worldspace) call fa_staywithus;
-[_worldspace,_state,_playerObj, _characterID] call faco_hook_playerSetup;
-[_playerObj, _worldspace select 1, _worldspace select 0] call faco_reset;
-_playerObj call faco_sendSecret;
-// FACO <<
-
-dayzPlayerLogin2 = [_worldspace,_state];
-_clientID = owner _playerObj;
-// FACO >>
-_clientID call faw_playerSetup;
-//_playerObj setVariable ["model_CHK",typeOf _playerObj];
-
-diag_log format["LOGIN PUBLISHING: UID#%1 CID#%2 %3 as %4 should spawn at %5", getPlayerUID _playerObj, _characterID, _playerObj call fa_plr2str, typeOf _playerObj, (_worldspace select 1) call fa_coor2str];
-// << FACO
 
 // PVDZE_obj_Debris = DZE_LocalRoadBlocks;
-_clientID = owner _playerObj;
 if (!isNull _playerObj) then {
+// FACO >>
+	_worldspace = (+_worldspace) call fa_staywithus;
+	[_worldspace,_state,_playerObj, _characterID] call faco_hook_playerSetup;
+	[_playerObj, _worldspace select 1, _worldspace select 0] call faco_reset;
+	_playerObj call faco_sendSecret;
+	// FACO <<
+	_clientID = owner _playerObj;
+	dayzPlayerLogin2 = [_worldspace,_state];
 	_clientID publicVariableClient "dayzPlayerLogin2";
-	
-	if (isNil "PVDZE_plr_SetDate") then {
-		call server_timeSync;
-	};
-	_clientID publicVariableClient "PVDZE_plr_SetDate";
+	// FACO >>
+	_clientID call faw_playerSetup;
+	dayzSetDate = date;
+	_clientID publicVariableClient "dayzSetDate";
+	//record time started
+	_playerObj setVariable ["lastTime",time];
+	//_playerObj setVariable ["model_CHK",typeOf _playerObj];
+
+	diag_log format["LOGIN PUBLISHING: UID#%1 CID#%2 %3 as %4 should spawn at %5", getPlayerUID _playerObj, _characterID, _playerObj call fa_plr2str, typeOf _playerObj, (_worldspace select 1) call fa_coor2str];
+	// << FACO
+	//record time started
+	_playerObj setVariable ["lastTime",time];
 };
-//record time started
-_playerObj setVariable ["lastTime",time];
 //_playerObj setVariable ["model_CHK",typeOf _playerObj];
 
 //diag_log ("LOGIN PUBLISHING: " + str(_playerObj) + " Type: " + (typeOf _playerObj));

@@ -4,12 +4,13 @@
 */
 
 // Public variable names for client and server (CLIENT one need to be blacklisted in BE filter publicvariable)
-#define PVCLIENT CLTFACO7840
-#define PVSERVER SRVFACO7840
+#define PVCLIENT CLTFACO4567
+#define PVCLIENTADMIN CLTFACOADMIN4567
+#define PVSERVER SRVFACO3224
 #define FNC(name) name##RANDOM
 #define VAR(name) name##RANDOM
 #define Stringify(macro) #macro
-
+/*
 // id of the first item spawned on Chernarus. Buildings are static item, so their id must be lower than that.
 #define FIRSTSPAWNEDITEMID 1055368
 
@@ -26,5 +27,6 @@
 #define LIMITGREYLIST 5
 // limit for legit ammo!! (cheater can dup them)
 #define LIMITWHITELIST 15
+*/
 // true: kick/kill player if cheat detected, false otherwise
 #define KICKCHEATER true
